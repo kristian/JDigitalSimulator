@@ -1,0 +1,203 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>lc.kra.jds</groupId>
+	<artifactId>jds</artifactId>
+	<version>2.0.0</version>
+	
+	<name>JDigitalSimulator</name>
+	<url>http://kra.lc/projects/jdigitalsimulator/</url>
+
+	<developers>
+		<developer>
+			<name>Kristian Kraljic</name>
+			<email>kris@kra.lc</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<inceptionYear>2010</inceptionYear>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>lc.kra.jds.gui.Application</mainClass>
+									<manifestEntries>
+										<Application-Name>JDitigalSimulator</Application-Name>
+										<Main-Class>lc.kra.jds.gui.Application</Main-Class>
+										<!-- <Permissions>sandbox</Permissions> -->
+										<!-- To switch to sandbox uncomment line above and comment next three lines, also change launch.jnlp file(s) -->
+										<Permissions>all-permissions</Permissions>																			 
+										<Codebase>*</Codebase>
+										<Build-By>Kristian Kraljic</Build-By>
+									</manifestEntries>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>1.7.15</version>
+				<executions>
+					<execution>
+						<id>l4j-clui</id>
+						<phase>package</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+							<jar>${project.build.directory}/${project.build.finalName}.jar</jar>
+							<downloadUrl>http://java.com/download</downloadUrl>
+							<classPath>
+								<mainClass>lc.kra.jds.gui.Application</mainClass>
+								<addDependencies>false</addDependencies>
+								<preCp>anything</preCp>
+							</classPath>
+							<icon>src/main/resources/lc/kra/jds/icon.ico</icon>
+							<jre>
+								<minVersion>1.7.0</minVersion>
+								<jdkPreference>preferJre</jdkPreference>
+							</jre>
+							<versionInfo>
+								<fileVersion>${project.version}.0</fileVersion>
+								<txtFileVersion>${project.version}.0</txtFileVersion>
+								<fileDescription>${project.name}</fileDescription>
+								<copyright>2017 Kristian Kraljic</copyright>
+								<productVersion>${project.version}.0</productVersion>
+								<txtProductVersion>${project.version}.0</txtProductVersion>
+								<productName>${project.name}</productName>
+								<internalName>JDigitalSimulator</internalName>
+								<originalFilename>${project.artifactId}.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-archive</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/archive.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>assembly-zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>assembly</finalName>
+							<descriptors>
+								<descriptor>src/assembly/assembly.xml</descriptor>
+							</descriptors>
+							<filters>
+								<filter>src/assembly/assembly-zip.properties</filter>
+							</filters>
+						</configuration>
+					</execution>
+					<execution>
+						<id>create-zip-archive</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>target/assembly/assembly/archive.xml</descriptor>
+							</descriptors>
+							<formats>
+								<format>zip</format>
+							</formats>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<profiles>
+		<profile>
+			<id>ci-build</id>
+			<properties>
+				<skipTests>true</skipTests>
+				<maven.test.skip>true</maven.test.skip>
+				<maven.javadoc.skip>true</maven.javadoc.skip>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.akathist.maven.plugins.launch4j</groupId>
+						<artifactId>launch4j-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>l4j-clui</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<skipAssembly>true</skipAssembly>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>	
+	</profiles>
+</project>
