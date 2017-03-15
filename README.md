@@ -14,7 +14,7 @@ To build `JDigitalSimulator` on your machine, checkout the repository, `cd` into
 ```
 mvn clean install
 ```
-
+In case you are trying to build on a 64bit Linux distribution, the 32bit Windows launcher will require the following libraries to be installed on your system `lib32z1`, `lib32ncurses5`, `lib32bz2-1.0` and `zlib1g:i386`.
 
 License
 -------
