@@ -1,3 +1,7 @@
+## 2.0.1 (2017-03-16)
+### Fixed
+  - Fixed high cpu-usage while dragging components with grid on
+
 ## 2.0.0 (2017-03-14)
 ### Added
   - This nicely formatted CAHNGELOG.md!
