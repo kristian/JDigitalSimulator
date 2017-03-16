@@ -163,6 +163,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 
 	private double zoom;
 	private boolean gridVisible;
+	private BufferedImage gridBuffer;
 
 	protected List<EventListener> listeners;
 
@@ -714,12 +715,17 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		return graphics;
 	}
 	private void paintGrid(Graphics graphics, Dimension size) {
-		graphics.setColor(Color.LIGHT_GRAY);
-		for(int x=0;x<size.width+GRID_STEPS;x+=GRID_STEPS)
-			for(int y=0;y<size.height+GRID_STEPS;y+=GRID_STEPS) {
-				graphics.drawLine(x-3, y, x+3, y);
-				graphics.drawLine(x, y-3, x, y+3);
-			}
+        if(gridBuffer==null || gridBuffer.getHeight()!=size.getHeight() || gridBuffer.getWidth()!=size.getWidth()){
+            gridBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics gridImage=gridBuffer.getGraphics();
+            gridImage.setColor(Color.LIGHT_GRAY);
+            for(int x=0;x<size.width+GRID_STEPS;x+=GRID_STEPS)
+                for(int y=0;y<size.height+GRID_STEPS;y+=GRID_STEPS) {
+                    gridImage.drawLine(x-3, y, x+3, y);
+                    gridImage.drawLine(x, y-3, x, y+3);
+                }
+        }
+        graphics.drawImage(gridBuffer,0,0,null);
 	}
 	@SuppressWarnings("unused") private void paintComponents(Graphics graphics, Collection<Component> components) { paintComponents(graphics, components, null); }
 	private void paintComponents(Graphics graphics, Collection<Component> components, Collection<?> ignore) {
