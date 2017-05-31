@@ -1,3 +1,7 @@
+## 2.0.2 (2017-05-31)
+### Added
+  - Added support to load JDigitalSimulator simulations stored with version 1.*
+
 ## 2.0.1 (2017-03-16)
 ### Fixed
   - Fixed high cpu-usage while dragging components with grid on
