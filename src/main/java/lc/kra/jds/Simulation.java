@@ -17,8 +17,10 @@
  */
 package lc.kra.jds;
 
-import static lc.kra.jds.Utilities.*;
-import static lc.kra.jds.gui.Guitilities.*;
+import static lc.kra.jds.Utilities.computeHash;
+import static lc.kra.jds.Utilities.getTranslation;
+import static lc.kra.jds.gui.Guitilities.addPoints;
+import static lc.kra.jds.gui.Guitilities.invertPoint;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -79,6 +81,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -101,17 +104,17 @@ import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.NumberFormatter;
 
-import lc.kra.jds.Utilities.AlternateClassLoaderObjectInputStream;
+import lc.kra.jds.Utilities.LegacyObjectInputStream;
 import lc.kra.jds.Utilities.RememberFileChooser;
 import lc.kra.jds.Utilities.TranslationType;
 import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Component.ComponentFlavor;
 import lc.kra.jds.components.Configurable;
+import lc.kra.jds.components.Configurable.Option;
+import lc.kra.jds.components.Configurable.Option.OptionType;
 import lc.kra.jds.components.Interactable;
 import lc.kra.jds.components.Sociable;
 import lc.kra.jds.components.Wire;
-import lc.kra.jds.components.Component.ComponentFlavor;
-import lc.kra.jds.components.Configurable.Option;
-import lc.kra.jds.components.Configurable.Option.OptionType;
 import lc.kra.jds.components.buildin.display.Voltmeter;
 import lc.kra.jds.components.buildin.external.ExternalSimulation;
 import lc.kra.jds.components.buildin.general.Junction;
@@ -124,10 +127,11 @@ import lc.kra.jds.exceptions.PasswordRequiredException;
 import lc.kra.jds.exceptions.WireNotConnectable;
 import lc.kra.jds.exceptions.WiringException;
 import lc.kra.jds.gui.Application;
-import lc.kra.jds.gui.Guitilities;
 import lc.kra.jds.gui.Application.SimulationFrame;
+import lc.kra.jds.gui.Guitilities;
 import lc.kra.jds.gui.Guitilities.Direction;
 import lc.kra.jds.gui.Guitilities.Rectangle;
+import lc.kra.jds.gui.Guitilities.RelativeMouseEvent;
 
 public class Simulation extends JComponent implements Scrollable, Printable {
 	private static final long serialVersionUID = 1l;
@@ -1164,7 +1168,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 	}
 
 	public final static Simulation readSimulation(InputStream in) throws IOException, ClassNotFoundException, PasswordRequiredException {
-		try {	return readSimulation(in, null); }
+		try { return readSimulation(in, null); }
 		catch(PasswordRequiredException e) { throw e; }
 		catch(GeneralSecurityException e) { throw new IOException(e); }
 	}
@@ -1173,7 +1177,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		if(in==null)
 			throw new IOException("Please specify an valid InputStream to read the simulation from.");
 		try {
-			ObjectInputStream objectIn = new AlternateClassLoaderObjectInputStream(in, Utilities.getSimpleClassLoader());
+			ObjectInputStream objectIn = new LegacyObjectInputStream(in);
 			try {
 				objectProperties = objectIn.readObject();
 				objectData = objectIn.readObject();
@@ -1181,7 +1185,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		} catch(StreamCorruptedException e) { //cypher required or corrupted input
 			if(password==null||password.isEmpty())
 				throw new PasswordRequiredException();
-			ObjectInputStream objectIn = new AlternateClassLoaderObjectInputStream(new CipherInputStream(in, Utilities.createCipher(Utilities.computeHash(password), Cipher.DECRYPT_MODE)), Utilities.getSimpleClassLoader());
+			ObjectInputStream objectIn = new LegacyObjectInputStream(new CipherInputStream(in, Utilities.createCipher(Utilities.computeHash(password), Cipher.DECRYPT_MODE)));
 			try {
 				objectProperties = objectIn.readObject();
 				objectData = objectIn.readObject();

@@ -40,8 +40,11 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -63,7 +66,7 @@ public final class Utilities {
 	private static Locale currentLocale = Locale.getDefault();
 	private static ResourceBundle translationBundle;
 	private static SimpleClassLoader simpleClassLoader;
-
+	
 	private static Properties configuration = new Properties();
 
 	public static Object copy(Object object) throws CloneNotSupportedException { //deep clone using serilization
@@ -417,17 +420,32 @@ public final class Utilities {
 			return cls;
 		}
 	}
-	public static class AlternateClassLoaderObjectInputStream extends ObjectInputStream{
-		private ClassLoader alternateClassLoader;
-		public AlternateClassLoaderObjectInputStream(InputStream in, ClassLoader alternateClassLoader) throws IOException { super(in); this.alternateClassLoader = alternateClassLoader; }
-		@Override protected Class<?> resolveClass(ObjectStreamClass description) throws IOException, ClassNotFoundException{
-			try{ return Class.forName(description.getName(), false, alternateClassLoader); }
+	
+	public static class AlternateClassLoaderObjectInputStream extends ObjectInputStream {
+		protected final ClassLoader alternateClassLoader;
+		public AlternateClassLoaderObjectInputStream(InputStream in, ClassLoader alternateClassLoader) throws IOException {
+			super(in); this.alternateClassLoader = alternateClassLoader; }
+		@Override protected Class<?> resolveClass(ObjectStreamClass descriptor) throws IOException, ClassNotFoundException{
+			try{ return Class.forName(descriptor.getName(), false, alternateClassLoader); }
 			catch(ClassNotFoundException e){
-				return super.resolveClass(description);
+				return super.resolveClass(descriptor);
 			}
 		}
 	}
-
+	public static class LegacyObjectInputStream extends AlternateClassLoaderObjectInputStream {
+		public static final String LEGACY_PACKAGE_PREFIX = "de.ksquared.", PACKAGE_PREFIX = "lc.kra.";
+		public LegacyObjectInputStream(InputStream in) throws IOException {
+			super(in, getSimpleClassLoader()); }
+		@Override protected ObjectStreamClass readClassDescriptor() throws IOException, ClassNotFoundException {
+			ObjectStreamClass descriptor = super.readClassDescriptor(); String name = descriptor.getName();
+			if(name.contains(LEGACY_PACKAGE_PREFIX)) descriptor = ObjectStreamClass.lookup(Class.forName(replaceLegacyPackage(name), false, alternateClassLoader));
+			return descriptor;
+		}
+		public static String replaceLegacyPackage(String name) {
+			return name.replaceFirst("^(\\[L)?"+Pattern.quote(LEGACY_PACKAGE_PREFIX), "$1"+Matcher.quoteReplacement(PACKAGE_PREFIX));
+		}
+	}
+	
 	public static URL getLocalPath() {
 		URL path = Utilities.class.getProtectionDomain().getCodeSource().getLocation();
 		try { return new URL(URLDecoder.decode(path.toString(), "UTF-8")); }
