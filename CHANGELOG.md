@@ -1,3 +1,7 @@
+## 2.0.3 (20120-03-04)
+### Fixed
+  - Fixed the (very buggy) 74181 ALU, thanks to Frank Möbius
+
 ## 2.0.2 (2017-05-31)
 ### Added
   - Added support to load JDigitalSimulator simulations stored with version 1.*
