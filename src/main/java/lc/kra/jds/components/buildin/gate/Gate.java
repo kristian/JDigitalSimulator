@@ -27,23 +27,35 @@ import lc.kra.jds.contacts.Contact;
 
 /**
  * Gate (build-in component)
- * @author Kristian Kraljic (kris@kra.lc)
+ *
+ * @author Kristian Kraljic (kris@kra.lc); Raik Rohde
  */
 public abstract class Gate extends Component implements Sociable {
-	private static final long serialVersionUID = 2l;
+    private static final long serialVersionUID = 2l;
 
-	protected Dimension size;
+    protected Dimension size;
 
-	public Gate() { size = new Dimension(50, 48); }
+    public Gate() {
+        if (this.getClass() == NotGate.class) {
+            size = new Dimension(45, 35);
+        } else {
+            size = new Dimension(55, 32);
+        }
+    }
 
-	@Override public void paint(Graphics graphics) {
-		graphics.setColor(Color.BLACK);
-		graphics.drawRect(5, 0, size.width-15, size.height);
-	}
-	protected void paintLabel(Graphics graphics, String label) { graphics.drawString(label, 5+(size.width-15)/2-graphics.getFontMetrics().stringWidth(label)/2, 15); }
-	protected void paintNot(Graphics graphics) { graphics.drawOval(size.width-10, size.height/2-3, 6, 6); }
+    @Override
+    public void paint(Graphics graphics) {
+        graphics.setColor(Color.BLACK);
+    }
 
-	@Override public abstract Contact[] getContacts();
-	@Override public final Dimension getSize() { return size; }
-	@Override public abstract void calculate();
+    protected void paintNot(Graphics graphics) { graphics.drawOval(size.width - 10, size.height / 2 - 3, 6, 6); }
+
+    @Override
+    public abstract Contact[] getContacts();
+
+    @Override
+    public final Dimension getSize() { return size; }
+
+    @Override
+    public abstract void calculate();
 }

@@ -26,7 +26,7 @@ import lc.kra.jds.contacts.Contact;
 
 /**
  * AND-Gate (build-in component)
- * @author Kristian Kraljic (kris@kra.lc)
+ * @author Kristian Kraljic (kris@kra.lc); Raik Rohde
  */
 public class AndGate extends AbstractGate {
 	private static final long serialVersionUID = 2l;
@@ -37,7 +37,9 @@ public class AndGate extends AbstractGate {
 
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
-		paintLabel(graphics, "&");
+		int transition = size.width - size.height / 2 - 11;
+		graphics.drawPolyline(new int[]{transition, 5, 5, transition}, new int[]{0, 0, size.height, size.height}, 4);
+		graphics.drawArc(transition - size.height / 2, 0, size.height, size.height, 90, -180);
 	}
 
 	@Override public void calculate() {

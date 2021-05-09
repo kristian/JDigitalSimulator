@@ -30,7 +30,7 @@ import lc.kra.jds.contacts.OutputContact;
 
 /**
  * NOT-Gate (build-in component)
- * @author Kristian Kraljic (kris@kra.lc)
+ * @author Kristian Kraljic (kris@kra.lc); Raik Rohde
  */
 public class NotGate extends Gate {
 	private static final long serialVersionUID = 2l;
@@ -53,7 +53,7 @@ public class NotGate extends Gate {
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
 		ContactUtilities.paintSolderingJoints(graphics, contacts);
-		paintLabel(graphics, "1");
+		graphics.drawPolyline(new int[]{5, size.width - 11, 5, 5}, new int[]{0, size.height / 2, size.height, 0}, 4);
 		paintNot(graphics);
 	}
 
