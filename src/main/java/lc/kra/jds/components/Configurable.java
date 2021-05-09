@@ -32,7 +32,7 @@ public interface Configurable {
 			NUMBER(Number.class),
 			BOOLEAN(Boolean.class),
 			TEXT(String.class),
-			LIST((new Object[0]).getClass()),
+			LIST(Object[].class),
 			FILE(FileFilter.class);
 			private Class<?> cls;
 			private OptionType(Class<?> cls) { this.cls = cls; }
@@ -64,6 +64,16 @@ public interface Configurable {
 			if(!(object instanceof Option))
 				return false;
 			return this.key.equals(((Option)object).key);
+		}
+
+		@Override
+		public String toString() {
+			return "Option{" +
+					"key='" + key + '\'' +
+					", label='" + label + '\'' +
+					", type=" + type +
+					", value=" + value +
+					'}';
 		}
 	}
 }
