@@ -17,13 +17,13 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
 import lc.kra.jds.components.Component;
 import lc.kra.jds.components.Sociable;
 import lc.kra.jds.contacts.Contact;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 
 /**
  * Gate (build-in component)
@@ -32,18 +32,32 @@ import lc.kra.jds.contacts.Contact;
 public abstract class Gate extends Component implements Sociable {
 	private static final long serialVersionUID = 2l;
 
+	private static final Dimension ISO_SIZE = new Dimension(50, 48), ANSI_SIZE = new Dimension(55, 35);
+
 	protected Dimension size;
 
-	public Gate() { size = new Dimension(50, 48); }
+	public Gate() {
+		checkSymbolStandard();
+	}
+
+	protected void changeSymbolStandard() {
+		if (useAnsiSymbols) {
+			size = ANSI_SIZE;
+		} else {
+			size = ISO_SIZE;
+		}
+	}
 
 	@Override public void paint(Graphics graphics) {
 		graphics.setColor(Color.BLACK);
-		graphics.drawRect(5, 0, size.width-15, size.height);
+		if (!useAnsiSymbols) {
+			graphics.drawRect(5, 0, size.width-15, size.height);
+		}
 	}
 	protected void paintLabel(Graphics graphics, String label) { graphics.drawString(label, 5+(size.width-15)/2-graphics.getFontMetrics().stringWidth(label)/2, 15); }
 	protected void paintNot(Graphics graphics) { graphics.drawOval(size.width-10, size.height/2-3, 6, 6); }
 
 	@Override public abstract Contact[] getContacts();
-	@Override public final Dimension getSize() { return size; }
+	@Override public Dimension getSize() { return size; }
 	@Override public abstract void calculate();
 }

@@ -37,7 +37,13 @@ public class OrGate extends AbstractGate {
 
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
-		paintLabel(graphics, "\u22651");
+		if(useAnsiSymbols){
+			graphics.drawArc(5 - (size.height / 3) / 2, 0, size.height / 3, size.height, 90, -180);
+			graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, 0, (int) (size.width * 1.6), (int) (size.height * 1.7), 90, -65);
+			graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, size.height - ((int) (size.height * 1.7)), (int) (size.width * 1.6), (int) (size.height * 1.7), -90, 65);
+		} else {
+			paintLabel(graphics, "\u22651");
+		}
 	}
 
 	@Override public void calculate() {

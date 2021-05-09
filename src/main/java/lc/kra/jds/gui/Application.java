@@ -140,7 +140,7 @@ import lc.kra.jds.exceptions.PasswordRequiredException;
 /**
  * JDigitalSimulator
  * @author Kristian Kraljic
- * @version 2.1.0
+ * @version 2.2.0
  */
 public class Application extends JFrame {
 	private static final long serialVersionUID = -4693271310855486553L;
@@ -148,7 +148,7 @@ public class Application extends JFrame {
 	public static final String FILE_EXTENSION = "jdsim";
 	public static File pluginDirectory, currentDirectory;
 
-	private static final String VERSION = "2.1.0", COPYRIGHT = "2010-2022", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
+	private static final String VERSION = "2.2.0", COPYRIGHT = "2010-2022", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
 
 	private static final String[]
 		TOOLBAR_FRAME_FOCUS = new String[]{"save", "print", "print_level", "simulate", "left", "right", "up", "down", "grid", "secure", "zoom_default", "zoom", "zoom_in", "zoom_out"},
@@ -586,6 +586,16 @@ public class Application extends JFrame {
 				lookAndFeel.setSelectedItem(UIManager.getLookAndFeel().getName());
 				centerPane.add(lookAndFeelPane);
 
+				centerPane.add(javax.swing.Box.createVerticalStrut(20));
+
+				centerPane.add(Guitilities.createSeparator(getTranslation("properties.symbols")));
+				javax.swing.JPanel symbolStandardPane = new javax.swing.JPanel(new java.awt.GridBagLayout());
+				final javax.swing.JComboBox<String> symbolStandard = Guitilities.addGridPairLine(symbolStandardPane, 0, new javax.swing.JLabel(getTranslation("properties.symbols.name")), new javax.swing.JComboBox<String>());
+				symbolStandard.addItem("IEC 60617-12 : 1997");
+				symbolStandard.addItem("ANSI/IEEE Std 91/91a-1991");
+				symbolStandard.setSelectedIndex(useAnsiSymbols() ? 1 : 0);
+				centerPane.add(symbolStandardPane);
+
 				JPanel bottomPane = Guitilities.createGradientFooter();
 				final ActionListener cancelListener = new ActionListener() {
 					@Override public void actionPerformed(ActionEvent event) { dialog.dispose(); }
@@ -607,6 +617,15 @@ public class Application extends JFrame {
 								SwingUtilities.updateComponentTreeUI(dialog);
 								SwingUtilities.updateComponentTreeUI(Application.this);
 							}
+						boolean useAnsiSymbols = symbolStandard.getSelectedIndex() == 1;
+						if (useAnsiSymbols != useAnsiSymbols()) {
+							setUseAnsiSymbols(useAnsiSymbols);
+							Utilities.setConfiguration(Utilities.CONFIGURATION_ANSI_SYMBOLS, Boolean.toString(useAnsiSymbols));
+							for(ComponentButton button:componentButtons)
+								button.refreshIcon();
+						}
+						revalidate();
+						repaint();
 					}
 				};
 				bottomPane.add(Guitilities.createButton(getTranslation("properties.okay"), new ActionListener() {
@@ -1028,9 +1047,9 @@ public class Application extends JFrame {
 
 		public ComponentButton(ComponentAttributes attributes, final Class<? extends Component> cls) throws InstantiationException, IllegalAccessException {
 			this.component = createComponent(cls);
-			setText(attributes.name);
+			setText((this.attributes = attributes).name);
 			setToolTipText(attributes.description);
-			setIcon(icon=createComponentImage(component, attributes.description));
+			refreshIcon();
 			setIconTextGap(10);
 			setHorizontalTextPosition(JButton.TRAILING);
 			setHorizontalAlignment(JButton.LEADING);
@@ -1075,15 +1094,20 @@ public class Application extends JFrame {
 			});
 		}
 
+		public void refreshIcon() {
+			setIcon(icon=createComponentImage(component, attributes.description));
+			repaint();
+		}
 		public void setIconVisible(boolean visible) {
 			if(!visible)
-				this.setIcon(null);
+				 this.setIcon(null);
 			else this.setIcon(icon);
 			repaint();
 		}
 
 		private Component createComponent(Class<? extends Component> cls) throws InstantiationException, IllegalAccessException { return cls.newInstance(); }
 		private ImageIcon createComponentImage(Component component, String tooltip) {
+			component.checkSymbolStandard();
 			Dimension size = component.getSize();
 			Image image = Guitilities.createTranslucentImage(size.width+1, size.height+1);
 			Graphics2D graphics = (Graphics2D) image.getGraphics();
@@ -1319,6 +1343,7 @@ public class Application extends JFrame {
 			for(Locale locale:Utilities.SUPPORTED_LOCALES)
 				if(locale.getLanguage().equals(localizationLanguage))
 					Utilities.setCurrentLocale(locale);
+		setUseAnsiSymbols(Boolean.parseBoolean(lc.kra.jds.Utilities.getConfiguration(CONFIGURATION_ANSI_SYMBOLS)));
 		Application application = new Application();
 		if(args.length!=0)
 			try { application.openWorksheet(new File(args[0])); }

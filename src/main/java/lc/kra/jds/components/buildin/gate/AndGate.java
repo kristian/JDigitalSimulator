@@ -37,7 +37,13 @@ public class AndGate extends AbstractGate {
 
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
-		paintLabel(graphics, "&");
+		if(useAnsiSymbols){
+			int transition = size.width - size.height / 2 - 11;
+			graphics.drawPolyline(new int[]{transition, 5, 5, transition}, new int[]{0, 0, size.height, size.height}, 4);
+			graphics.drawArc(transition - size.height / 2, 0, size.height, size.height, 90, -180);
+		} else {
+			paintLabel(graphics, "&");
+		}
 	}
 
 	@Override public void calculate() {

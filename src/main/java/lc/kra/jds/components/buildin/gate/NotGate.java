@@ -17,16 +17,17 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import static lc.kra.jds.Utilities.*;
-
-import java.awt.Graphics;
-import java.awt.Point;
-
 import lc.kra.jds.Utilities.TranslationType;
 import lc.kra.jds.contacts.Contact;
 import lc.kra.jds.contacts.ContactUtilities;
 import lc.kra.jds.contacts.InputContact;
 import lc.kra.jds.contacts.OutputContact;
+
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+
+import static lc.kra.jds.Utilities.getTranslation;
 
 /**
  * NOT-Gate (build-in component)
@@ -38,6 +39,7 @@ public class NotGate extends Gate {
 	private static final String KEY;
 	static { KEY = "component.gate."+NotGate.class.getSimpleName().toLowerCase(); }
 	public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.gate", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
+	private static final Dimension ANSI_SIZE = new Dimension(45, 35);
 
 	private InputContact input;
 	private OutputContact output;
@@ -50,14 +52,30 @@ public class NotGate extends Gate {
 		contacts = new Contact[]{input, output};
 	}
 
+	@Override
+	protected void changeSymbolStandard() {
+		super.changeSymbolStandard();
+		if (useAnsiSymbols) 
+			size = ANSI_SIZE;
+		if (input != null)
+			input.setLocation(new Point(0, this.size.height / 2));
+		if (output != null)
+			output.setLocation(new Point(this.size.width, this.size.height / 2));
+	}
+
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
 		ContactUtilities.paintSolderingJoints(graphics, contacts);
-		paintLabel(graphics, "1");
+		if (useAnsiSymbols) {
+			graphics.drawPolyline(new int[]{5, size.width - 11, 5, 5}, new int[]{0, size.height / 2, size.height, 0}, 4);
+		} else {
+			paintLabel(graphics, "1");
+		}
 		paintNot(graphics);
 	}
 
 	@Override public Contact[] getContacts() { return contacts; }
+	@Override public Dimension getSize() { return size; }
 	@Override public void calculate() {
 		output.setCharged(!input.isCharged());
 	}

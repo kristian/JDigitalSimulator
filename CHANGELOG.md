@@ -1,3 +1,7 @@
+## 2.2.0 (2022-06-18)
+### Added
+  - US / ANSI style gate symbols and option to switch in the menu, thanks to Sett17
+
 ## 2.1.0 (2022-01-25)
 ### Fixed
   - Bumped launch4j to version 2.1.0

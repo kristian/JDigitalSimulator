@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 
 import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Wire;
 import lc.kra.jds.exceptions.LocationOutOfBoundsException;
 
 public abstract class ComponentContact extends Contact implements Cloneable {
@@ -39,9 +40,14 @@ public abstract class ComponentContact extends Contact implements Cloneable {
 	@Override public Component getComponent() { return component; }
 	@Override public Point getLocation() { return this.location; }
 	@Override public void setLocation(Point location) throws LocationOutOfBoundsException {
-		this.location = location;
-		if(location.x+location.y!=0)
-			validateLocation(); //store location but throw a exception
+		if (!location.equals(this.location)) {
+			this.location = location;
+			if(location.x+location.y!=0)
+				validateLocation(); //store location but throw a exception
+			for(Wire wire:getWires()) {
+				wire.revalidate();
+			}
+		}
 	}
 
 	@Override protected void validateLocation() throws LocationOutOfBoundsException {

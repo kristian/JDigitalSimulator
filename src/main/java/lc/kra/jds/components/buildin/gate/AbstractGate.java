@@ -17,12 +17,6 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import java.awt.Graphics;
-import java.awt.Point;
-import java.beans.PropertyVetoException;
-import java.util.HashMap;
-import java.util.Map;
-
 import lc.kra.jds.Utilities;
 import lc.kra.jds.components.Configurable;
 import lc.kra.jds.components.Configurable.Option.OptionType;
@@ -31,6 +25,12 @@ import lc.kra.jds.contacts.ContactList;
 import lc.kra.jds.contacts.ContactUtilities;
 import lc.kra.jds.contacts.InputContact;
 import lc.kra.jds.contacts.OutputContact;
+
+import java.awt.Graphics;
+import java.awt.Point;
+import java.beans.PropertyVetoException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract-Gate (build-in component)
@@ -50,13 +50,30 @@ public abstract class AbstractGate extends Gate implements Configurable {
 		contacts = ContactUtilities.concatenateContacts(output, inputs.toArray());
 	}
 
+	@Override
+	protected void changeSymbolStandard() {
+		super.changeSymbolStandard();
+		if (inputs != null)
+			inputs.setContactLocations();
+		if (output != null)
+			output.setLocation(new Point(this.size.width, this.size.height / 2));
+	}
+
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
 		Class<? extends AbstractGate> cls = this.getClass();
 		if(cls.equals(NandGate.class)||cls.equals(NorGate.class)||cls.equals(XnorGate.class))
-			ContactUtilities.paintSolderingJoint(graphics, 5, 3, output);
+			 ContactUtilities.paintSolderingJoint(graphics, 5, 3, output);
 		else ContactUtilities.paintSolderingJoint(graphics, 5, 10, output);
-		inputs.paintSolderingJoints(graphics, 5, 10);
+		if (useAnsiSymbols) {
+			if (cls.equals(OrGate.class)||cls.equals(NorGate.class)||cls.equals(XorGate.class)||cls.equals(XnorGate.class)) {
+				inputs.paintSolderingJoints(graphics, 9, 10);
+			} else {
+				inputs.paintSolderingJoints(graphics, 5, 10);
+			}
+		} else {
+			inputs.paintSolderingJoints(graphics, 5, 10);
+		}
 	}
 
 	@Override public Contact[] getContacts() { return contacts; }

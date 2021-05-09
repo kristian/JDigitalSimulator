@@ -57,9 +57,19 @@ public abstract class Component implements Paintable, Locatable, Moveable, Clone
 
 	private Point location;
 	protected PropertyChangeSupport change;
+	protected Boolean useAnsiSymbols;
 
 	public Component() { this.location = new Point(); }
 	public Component(Point location) { this.setLocation(location); }
+
+	public final void checkSymbolStandard() {
+		Boolean currentUseAnsiSymbols = Boolean.valueOf(useAnsiSymbols());
+		if (!currentUseAnsiSymbols.equals(useAnsiSymbols)) {
+			useAnsiSymbols = currentUseAnsiSymbols;
+			changeSymbolStandard();
+		}
+	}
+	protected void changeSymbolStandard() {}
 
 	public abstract Dimension getSize();
 	@Override public void moveTo(Point location) { this.setLocation(location); }

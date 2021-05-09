@@ -743,6 +743,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 				wire.paint(graphics);
 	}
 	private List<Wire> paintComponent(Graphics graphics, Component component) {
+		component.checkSymbolStandard();
 		Point location = component.getLocation();
 		Dimension size = component.getSize();
 		graphics.setColor(Color.BLACK);
