@@ -34,7 +34,7 @@ import lc.kra.jds.contacts.OutputContact;
 
 /**
  * Abstract-Gate (build-in component)
- * @author Kristian Kraljic (kris@kra.lc)
+ * @author Kristian Kraljic (kris@kra.lc); Raik Rohde
  */
 public abstract class AbstractGate extends Gate implements Configurable {
 	private static final long serialVersionUID = 2l;
@@ -56,7 +56,11 @@ public abstract class AbstractGate extends Gate implements Configurable {
 		if(cls.equals(NandGate.class)||cls.equals(NorGate.class)||cls.equals(XnorGate.class))
 			ContactUtilities.paintSolderingJoint(graphics, 5, 3, output);
 		else ContactUtilities.paintSolderingJoint(graphics, 5, 10, output);
-		inputs.paintSolderingJoints(graphics, 5, 10);
+		if (cls.equals(OrGate.class) || cls.equals(NorGate.class) || cls.equals(XorGate.class) || cls.equals(XnorGate.class)) {
+			inputs.paintSolderingJoints(graphics, 9, 10);
+		} else {
+			inputs.paintSolderingJoints(graphics, 5, 10);
+		}
 	}
 
 	@Override public Contact[] getContacts() { return contacts; }

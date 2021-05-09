@@ -4,8 +4,8 @@
 
 	<groupId>lc.kra.jds</groupId>
 	<artifactId>jds</artifactId>
-	<version>2.0.3</version>
-	
+	<version>2.1.0</version>
+
 	<name>JDigitalSimulator</name>
 	<url>http://kra.lc/projects/jdigitalsimulator/</url>
 
@@ -17,20 +17,27 @@
 				<role>Developer</role>
 			</roles>
 		</developer>
+		<developer>
+			<name>Raik Rohde</name>
+			<email/>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<inceptionYear>2010</inceptionYear>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<build>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -61,7 +68,7 @@
 										<Main-Class>lc.kra.jds.gui.Application</Main-Class>
 										<!-- <Permissions>sandbox</Permissions> -->
 										<!-- To switch to sandbox uncomment line above and comment next three lines, also change launch.jnlp file(s) -->
-										<Permissions>all-permissions</Permissions>																			 
+										<Permissions>all-permissions</Permissions>
 										<Codebase>*</Codebase>
 										<Build-By>Kristian Kraljic</Build-By>
 									</manifestEntries>
@@ -171,7 +178,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>ci-build</id>
@@ -201,6 +208,6 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>	
+		</profile>
 	</profiles>
 </project>
