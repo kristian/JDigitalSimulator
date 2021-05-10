@@ -17,48 +17,78 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import static lc.kra.jds.Utilities.*;
-
-import java.awt.Graphics;
-import java.awt.Point;
-
+import lc.kra.jds.Utilities;
 import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.components.Wire;
 import lc.kra.jds.contacts.Contact;
 import lc.kra.jds.contacts.ContactUtilities;
 import lc.kra.jds.contacts.InputContact;
 import lc.kra.jds.contacts.OutputContact;
 
+import java.awt.*;
+
+import static lc.kra.jds.Utilities.getTranslation;
+
 /**
  * NOT-Gate (build-in component)
+ *
  * @author Kristian Kraljic (kris@kra.lc); Raik Rohde
  */
 public class NotGate extends Gate {
-	private static final long serialVersionUID = 2l;
+    private static final long serialVersionUID = 2l;
 
-	private static final String KEY;
-	static { KEY = "component.gate."+NotGate.class.getSimpleName().toLowerCase(); }
-	public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.gate", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
+    private static final String KEY;
 
-	private InputContact input;
-	private OutputContact output;
-	private Contact[] contacts;
+    static {
+        KEY = "component.gate." + NotGate.class.getSimpleName().toLowerCase();
+    }
 
-	public NotGate() {
-		input = new InputContact(this, new Point(0, size.height/2));
-		output = new OutputContact(this, new Point(size.width, size.height/2));
-		output.setCharged(true);
-		contacts = new Contact[]{input, output};
-	}
+    public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.gate", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
-	@Override public void paint(Graphics graphics) {
-		super.paint(graphics);
-		ContactUtilities.paintSolderingJoints(graphics, contacts);
-		graphics.drawPolyline(new int[]{5, size.width - 11, 5, 5}, new int[]{0, size.height / 2, size.height, 0}, 4);
-		paintNot(graphics);
-	}
+    private InputContact input;
+    private OutputContact output;
+    private Contact[] contacts;
 
-	@Override public Contact[] getContacts() { return contacts; }
-	@Override public void calculate() {
-		output.setCharged(!input.isCharged());
-	}
+    public NotGate() {
+        input = new InputContact(this, new Point(0, size.height / 2));
+        output = new OutputContact(this, new Point(size.width, size.height / 2));
+        output.setCharged(true);
+        contacts = new Contact[]{input, output};
+    }
+
+
+    @Override
+    protected void checkSymbols() {
+        if (currentlyUsesBetterSymbols != Utilities.useBetterSymbols) {
+            recalcSize();
+            input.setLocation(new Point(0, this.size.height / 2));
+            output.setLocation(new Point(this.size.width, this.size.height / 2));
+            for (Contact contact : contacts) {
+                for (Wire wire : contact.getWires()) {
+                    wire.revalidate();
+                }
+            }
+        }
+        super.checkSymbols();
+    }
+
+    @Override
+    public void paint(Graphics graphics) {
+        super.paint(graphics);
+        ContactUtilities.paintSolderingJoints(graphics, contacts);
+        if (Utilities.useBetterSymbols) {
+            graphics.drawPolyline(new int[]{5, size.width - 11, 5, 5}, new int[]{0, size.height / 2, size.height, 0}, 4);
+        } else {
+            paintLabel(graphics, "1");
+        }
+        paintNot(graphics);
+    }
+
+    @Override
+    public Contact[] getContacts() { return contacts; }
+
+    @Override
+    public void calculate() {
+        output.setCharged(!input.isCharged());
+    }
 }

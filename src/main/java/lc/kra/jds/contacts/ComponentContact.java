@@ -17,16 +17,15 @@
  */
 package lc.kra.jds.contacts;
 
-import java.awt.Dimension;
-import java.awt.Point;
-
 import lc.kra.jds.components.Component;
 import lc.kra.jds.exceptions.LocationOutOfBoundsException;
+
+import java.awt.*;
 
 public abstract class ComponentContact extends Contact implements Cloneable {
 	private static final long serialVersionUID = 1l;
 
-	protected Point location;
+	public Point location;
 	protected Component component;
 
 	public ComponentContact(Component component) { this(component, new Point()); }

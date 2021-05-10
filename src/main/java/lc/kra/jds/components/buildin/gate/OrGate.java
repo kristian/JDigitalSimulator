@@ -17,12 +17,13 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import static lc.kra.jds.Utilities.getTranslation;
-
-import java.awt.Graphics;
-
+import lc.kra.jds.Utilities;
 import lc.kra.jds.Utilities.TranslationType;
 import lc.kra.jds.contacts.Contact;
+
+import java.awt.*;
+
+import static lc.kra.jds.Utilities.getTranslation;
 
 /**
  * OR-Gate (build-in component)
@@ -43,9 +44,13 @@ public class OrGate extends AbstractGate {
     @Override
     public void paint(Graphics graphics) {
         super.paint(graphics);
-        graphics.drawArc(5 - (size.height / 3) / 2, 0, size.height / 3, size.height, 90, -180);
-        graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, 0, (int) (size.width * 1.6), (int) (size.height * 1.7), 90, -65);
-        graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, size.height - ((int) (size.height * 1.7)), (int) (size.width * 1.6), (int) (size.height * 1.7), -90, 65);
+        if(Utilities.useBetterSymbols){
+            graphics.drawArc(5 - (size.height / 3) / 2, 0, size.height / 3, size.height, 90, -180);
+            graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, 0, (int) (size.width * 1.6), (int) (size.height * 1.7), 90, -65);
+            graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, size.height - ((int) (size.height * 1.7)), (int) (size.width * 1.6), (int) (size.height * 1.7), -90, 65);
+        } else {
+            paintLabel(graphics, "\u22651");
+        }
     }
 
     @Override

@@ -27,9 +27,6 @@ import lc.kra.jds.components.Component;
 import lc.kra.jds.components.Component.ComponentAttributes;
 import lc.kra.jds.components.Component.ComponentFlavor;
 import lc.kra.jds.components.Component.HiddenComponent;
-import lc.kra.jds.components.buildin.display.BinaryDisplay;
-import lc.kra.jds.components.buildin.switches.PushSwitch;
-import lc.kra.jds.components.buildin.switches.Switch;
 import lc.kra.jds.exceptions.PasswordRequiredException;
 
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -578,6 +575,16 @@ public class Application extends JFrame {
                 lookAndFeel.setSelectedItem(UIManager.getLookAndFeel().getName());
                 centerPane.add(lookAndFeelPane);
 
+                centerPane.add(Box.createVerticalStrut(20));
+
+                centerPane.add(Guitilities.createSeparator(getTranslation("properties.symbols")));
+                JPanel symbolsPane = new JPanel(new GridBagLayout());
+                final JComboBox<String> symbols = Guitilities.addGridPairLine(symbolsPane, 0, new JLabel(getTranslation("properties.symbols.name")), new JComboBox<String>());
+                symbols.addItem("ANSI/IEEE Std 91/91a-1991");
+                symbols.addItem("IEC 60617-12 : 1997");
+                symbols.setSelectedIndex(useBetterSymbols ? 0 : 1);
+                centerPane.add(symbolsPane);
+
                 JPanel bottomPane = Guitilities.createGradientFooter();
                 final ActionListener cancelListener = new ActionListener() {
                     @Override
@@ -601,6 +608,24 @@ public class Application extends JFrame {
                                 SwingUtilities.updateComponentTreeUI(dialog);
                                 SwingUtilities.updateComponentTreeUI(Application.this);
                             }
+                        switch (symbols.getSelectedIndex()) {
+                            case 0:
+                                if (!useBetterSymbols) {
+                                    JOptionPane.showMessageDialog(dialog, getTranslation("properties.symbols.info"));
+                                    useBetterSymbols = true;
+                                    Utilities.setConfiguration(CONFIGURATION_BETTER_SYMBOLS, "true");
+                                }
+                                break;
+                            case 1:
+                                if (useBetterSymbols) {
+                                    JOptionPane.showMessageDialog(dialog, getTranslation("properties.symbols.info"));
+                                    useBetterSymbols = false;
+                                    Utilities.setConfiguration(CONFIGURATION_BETTER_SYMBOLS, "false");
+                                    break;
+                                }
+                        }
+                        revalidate();
+                        repaint();
                     }
                 };
                 bottomPane.add(Guitilities.createButton(getTranslation("properties.okay"), new ActionListener() {
@@ -661,6 +686,15 @@ public class Application extends JFrame {
                     Application.this.toolbar.setFloatable(false);
                     device.setFullScreenWindow(window);
                 }
+            }
+        }));
+        display.add(new JSeparator());
+        display.add(createMenuItem("window.symbols", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                useBetterSymbols = !useBetterSymbols;
+                revalidate();
+                repaint();
             }
         }));
         menubar.add(display);
@@ -759,47 +793,47 @@ public class Application extends JFrame {
             }
         });
         toolbar.add(simulateButton);
-        toolbar.addSeparator();
-        JButton analyseButton = new JButton(getTranslation("toolbar.analyse"));
-        analyseButton.setFont(analyseButton.getFont().deriveFont(Font.BOLD, 14f));
-        analyseButton.setToolTipText(getTranslation("toolbar.analyse", TranslationType.TOOLTIP));
-        analyseButton.setActionCommand("analyse");
-        analyseButton.setPreferredSize(new Dimension(analyseButton.getPreferredSize().width, 40));
-        analyseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-//                public void showAnalyseDialog() {
-                final JDialog dialog = Guitilities.createDialog(null, getTranslation("component.analyse", TranslationType.TITLE));
-                JPanel centerpane = new JPanel(new GridBagLayout());
-                centerpane.setBorder(Guitilities.HUGE_EMPTY_BORDER);
-                dialog.add(centerpane);
-
-//                do everything here:
-                Simulation sim = getActiveSimulation();
-                ArrayList<Component> inputs = new ArrayList<>();
-                ArrayList<BinaryDisplay> outputs = new ArrayList<>();
-                for (Component component : sim.getAllComponents()) {
-                    if ((component instanceof Switch && ((Switch) component).toAnalyse()) ||
-                            (component instanceof PushSwitch && ((PushSwitch) component).toAnalyse())) {
-                        inputs.add(component);
-                    } else if (component instanceof BinaryDisplay && ((BinaryDisplay) component).toAnalyse()) {
-                        outputs.add((BinaryDisplay) component);
-                    }
-                }
-                if (inputs.size() < 1 || outputs.size() < 1) {
-//                    throw new PropertyVetoException(Utilities.getTranslation("component.analyse.error"), null);
-                    // ? cant throw here; something else
-                    System.out.println("atleast 1 input and 1 output needed!"); // ? temporarily
-                }
-
-
-//                dialog.pack();
-//                dialog.setSize(new Dimension(500, dialog.getHeight()));
-//                dialog.setVisible(true);
+//        toolbar.addSeparator();
+//        JButton analyseButton = new JButton(getTranslation("toolbar.analyse"));
+//        analyseButton.setFont(analyseButton.getFont().deriveFont(Font.BOLD, 14f));
+//        analyseButton.setToolTipText(getTranslation("toolbar.analyse", TranslationType.TOOLTIP));
+//        analyseButton.setActionCommand("analyse");
+//        analyseButton.setPreferredSize(new Dimension(analyseButton.getPreferredSize().width, 40));
+//        analyseButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+////                public void showAnalyseDialog() {
+//                final JDialog dialog = Guitilities.createDialog(null, getTranslation("component.analyse", TranslationType.TITLE));
+//                JPanel centerpane = new JPanel(new GridBagLayout());
+//                centerpane.setBorder(Guitilities.HUGE_EMPTY_BORDER);
+//                dialog.add(centerpane);
+//
+////                do everything here:
+//                Simulation sim = getActiveSimulation();
+//                ArrayList<Component> inputs = new ArrayList<>();
+//                ArrayList<BinaryDisplay> outputs = new ArrayList<>();
+//                for (Component component : sim.getAllComponents()) {
+//                    if ((component instanceof Switch && ((Switch) component).toAnalyse()) ||
+//                            (component instanceof PushSwitch && ((PushSwitch) component).toAnalyse())) {
+//                        inputs.add(component);
+//                    } else if (component instanceof BinaryDisplay && ((BinaryDisplay) component).toAnalyse()) {
+//                        outputs.add((BinaryDisplay) component);
+//                    }
 //                }
-            }
-        });
-        toolbar.add(analyseButton);
+//                if (inputs.size() < 1 || outputs.size() < 1) {
+////                    throw new PropertyVetoException(Utilities.getTranslation("component.analyse.error"), null);
+//                    // ? cant throw here; something else
+//                    System.out.println("atleast 1 input and 1 output needed!"); // ? temporarily
+//                }
+//
+//
+////                dialog.pack();
+////                dialog.setSize(new Dimension(500, dialog.getHeight()));
+////                dialog.setVisible(true);
+////                }
+//            }
+//        });
+//        toolbar.add(analyseButton);
         toolbar.addSeparator();
         class TraverseViewportActionListener implements ActionListener {
             private Point traverse;
@@ -1459,6 +1493,14 @@ public class Application extends JFrame {
             for (Locale locale : Utilities.SUPPORTED_LOCALES)
                 if (locale.getLanguage().equals(localizationLanguage))
                     Utilities.setCurrentLocale(locale);
+        String configBetterSymbols = Utilities.getConfiguration(CONFIGURATION_BETTER_SYMBOLS);
+        if (configBetterSymbols != null) {
+            if (configBetterSymbols.equals("true")) {
+                useBetterSymbols = true;
+            } else if (configBetterSymbols.equals("false")) {
+                useBetterSymbols = false;
+            }
+        }
         Application application = new Application();
         if (args.length != 0)
             try {

@@ -17,11 +17,10 @@
  */
 package lc.kra.jds.contacts;
 
-import java.awt.Graphics;
-import java.awt.Point;
-import java.lang.reflect.Array;
-
 import lc.kra.jds.components.Component;
+
+import java.awt.*;
+import java.lang.reflect.Array;
 
 public class ContactUtilities {
 	public static Contact[] concatenateContacts(Contact contact, Contact[] contacts) { return concatenateContacts(new Contact[]{contact}, contacts); }

@@ -17,13 +17,12 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
+import lc.kra.jds.Utilities;
 import lc.kra.jds.components.Component;
 import lc.kra.jds.components.Sociable;
 import lc.kra.jds.contacts.Contact;
+
+import java.awt.*;
 
 /**
  * Gate (build-in component)
@@ -34,19 +33,41 @@ public abstract class Gate extends Component implements Sociable {
     private static final long serialVersionUID = 2l;
 
     protected Dimension size;
+    protected boolean currentlyUsesBetterSymbols = true;
 
     public Gate() {
-        if (this.getClass() == NotGate.class) {
-            size = new Dimension(45, 35);
+        recalcSize();
+    }
+
+    protected void recalcSize() {
+        if (Utilities.useBetterSymbols) {
+            if (this.getClass() == NotGate.class) {
+                size = new Dimension(45, 35);
+            } else {
+                size = new Dimension(55, 35);
+            }
         } else {
-            size = new Dimension(55, 32);
+            size = new Dimension(50, 48);
         }
     }
 
     @Override
     public void paint(Graphics graphics) {
         graphics.setColor(Color.BLACK);
+        checkSymbols();
+        if (!currentlyUsesBetterSymbols) {
+            graphics.drawRect(5, 0, size.width - 15, size.height);
+        }
     }
+
+    protected void checkSymbols() {
+        if (currentlyUsesBetterSymbols != Utilities.useBetterSymbols) {
+            currentlyUsesBetterSymbols = Utilities.useBetterSymbols;
+            recalcSize();
+        }
+    }
+
+    protected void paintLabel(Graphics graphics, String label) { graphics.drawString(label, 5 + (size.width - 15) / 2 - graphics.getFontMetrics().stringWidth(label) / 2, 15); }
 
     protected void paintNot(Graphics graphics) { graphics.drawOval(size.width - 10, size.height / 2 - 3, 6, 6); }
 
@@ -54,7 +75,10 @@ public abstract class Gate extends Component implements Sociable {
     public abstract Contact[] getContacts();
 
     @Override
-    public final Dimension getSize() { return size; }
+    public final Dimension getSize() {
+        recalcSize();
+        return size;
+    }
 
     @Override
     public abstract void calculate();

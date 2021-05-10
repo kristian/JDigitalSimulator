@@ -17,12 +17,13 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import static lc.kra.jds.Utilities.getTranslation;
-
-import java.awt.Graphics;
-
+import lc.kra.jds.Utilities;
 import lc.kra.jds.Utilities.TranslationType;
 import lc.kra.jds.contacts.Contact;
+
+import java.awt.*;
+
+import static lc.kra.jds.Utilities.getTranslation;
 
 /**
  * AND-Gate (build-in component)
@@ -37,9 +38,13 @@ public class AndGate extends AbstractGate {
 
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
-		int transition = size.width - size.height / 2 - 11;
-		graphics.drawPolyline(new int[]{transition, 5, 5, transition}, new int[]{0, 0, size.height, size.height}, 4);
-		graphics.drawArc(transition - size.height / 2, 0, size.height, size.height, 90, -180);
+		if(Utilities.useBetterSymbols){
+			int transition = size.width - size.height / 2 - 11;
+			graphics.drawPolyline(new int[]{transition, 5, 5, transition}, new int[]{0, 0, size.height, size.height}, 4);
+			graphics.drawArc(transition - size.height / 2, 0, size.height, size.height, 90, -180);
+		} else {
+			paintLabel(graphics, "&");
+		}
 	}
 
 	@Override public void calculate() {

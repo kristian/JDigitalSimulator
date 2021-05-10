@@ -47,11 +47,6 @@ public abstract class Component implements Paintable, Locatable, Moveable, Clone
     private static final long serialVersionUID = 1l;
 
     public static final ComponentAttributes componentAttributes = null;
-    public static final ArrayList<String> NAMES;
-
-    static {
-        NAMES = new ArrayList<>();
-    }
 
     private Point location;
     protected PropertyChangeSupport change;

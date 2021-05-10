@@ -30,7 +30,6 @@ import lc.kra.jds.contacts.OutputContact;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,18 +37,13 @@ import static lc.kra.jds.Utilities.getTranslation;
 
 /**
  * Push-Switch (build-in component)
- *
  * @author Kristian Kraljic (kris@kra.lc)
  */
 public class PushSwitch extends Component implements Sociable, Interactable, Configurable {
     private static final long serialVersionUID = 2l;
 
     private static final String KEY;
-
-    static {
-        KEY = "component.switches." + PushSwitch.class.getSimpleName().toLowerCase();
-    }
-
+    static { KEY = "component.switches."+PushSwitch.class.getSimpleName().toLowerCase(); }
     public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.switches", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
     private Dimension size;
@@ -59,25 +53,16 @@ public class PushSwitch extends Component implements Sociable, Interactable, Con
     private OutputContact output;
     private Contact[] contacts;
 
-    private String name = "Input" + this.hashCode();
-
-    public boolean toAnalyse() {
-        return analyse;
-    }
-
-    private boolean analyse = false;
-
     public PushSwitch() {
         size = new Dimension(28, 28);
-        output = new OutputContact(this, new Point(size.width, size.height / 2));
+        output = new OutputContact(this, new Point(size.width, size.height/2));
         output.setCharged(position);
-        contacts = new Contact[]{output};
+        contacts = new Contact[] {output};
     }
 
-    @Override
-    public void paint(Graphics graphics) {
+    @Override public void paint(Graphics graphics) {
         graphics.setColor(Color.BLACK);
-        if (output.isCharged()) {
+        if(output.isCharged()) {
             graphics.drawLine(10, 5, 23, 14);
             graphics.drawLine(11, 0, 21, 0);
             graphics.drawLine(14, 0, 14, 7);
@@ -90,65 +75,23 @@ public class PushSwitch extends Component implements Sociable, Interactable, Con
         }
         graphics.drawString("1", 0, 10);
         graphics.drawString("0", 0, 28);
-        if (analyse) graphics.drawString(name, -graphics.getFontMetrics().stringWidth(name) / 2 + size.width / 2, -7);
         ContactUtilities.paintSolderingJoints(graphics, contacts);
     }
 
-    @Override
-    public Dimension getSize() { return size; }
+    @Override public Dimension getSize() { return size; }
+    @Override public Contact[] getContacts() { return contacts;	}
+    @Override public void calculate() { } //the output is always charged like the switch
 
-    @Override
-    public Contact[] getContacts() { return contacts; }
+    @Override public void mouseClick(MouseEvent event) { }
+    @Override public void mouseDoubleClick(MouseEvent event) { }
+    @Override public void mouseDown(MouseEvent event) { output.setCharged(!position); }
+    @Override public void mouseUp(MouseEvent event) { output.setCharged(position); }
 
-    @Override
-    public void calculate() { } //the output is always charged like the switch
-
-    @Override
-    public void mouseClick(MouseEvent event) { }
-
-    @Override
-    public void mouseDoubleClick(MouseEvent event) { }
-
-    @Override
-    public void mouseDown(MouseEvent event) { output.setCharged(!position); }
-
-    @Override
-    public void mouseUp(MouseEvent event) { output.setCharged(position); }
-
-    @Override
-    public Option[] getOptions() {
-        return new Option[]{
-                new Option("position", Utilities.getTranslation("component.switch.position"), OptionType.BOOLEAN, false),
-                new Option("analyse", Utilities.getTranslation("component.switch.analyse"), OptionType.BOOLEAN, false),
-                new Option("name", "Name", Option.OptionType.TEXT, "Input" + this.hashCode())};
-    }
-
-    @Override
-    public void setConfiguration(Map<Option, Object> configuration) throws PropertyVetoException {
-        output.setCharged(position = (Boolean) configuration.get(getOptions()[0]));
-        analyse = (boolean) configuration.get(getOptions()[1]);
-        NAMES.remove(name);
-        String text = configuration.get(getOptions()[2]).toString().trim();
-        if (NAMES.contains(text)) throw new PropertyVetoException(Utilities.getTranslation("component.switches.error"), null);
-        this.name = text;
-        NAMES.add(text);
-    }
-
-    @Override
-    public Map<Option, Object> getConfiguration() {
+    @Override public Option[] getOptions() { return new Option[]{new Option("position", Utilities.getTranslation("component.switch.position"), OptionType.BOOLEAN, false)}; }
+    @Override public void setConfiguration(Map<Option, Object> configuration) { output.setCharged(position = (Boolean)configuration.get(getOptions()[0])); }
+    @Override public Map<Option, Object> getConfiguration() {
         Map<Option, Object> configuration = new HashMap<Option, Object>();
         configuration.put(getOptions()[0], position);
-        configuration.put(getOptions()[1], analyse);
-        configuration.put(getOptions()[2], name);
         return configuration;
-    }
-
-    @Override
-    public String toString() {
-        return "PushSwitch{" +
-                "output=" + output +
-                ", name='" + name + '\'' +
-                ", analyse=" + analyse +
-                '}';
     }
 }
