@@ -17,7 +17,6 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import lc.kra.jds.Utilities;
 import lc.kra.jds.Utilities.TranslationType;
 import lc.kra.jds.contacts.Contact;
 
@@ -44,7 +43,7 @@ public class OrGate extends AbstractGate {
     @Override
     public void paint(Graphics graphics) {
         super.paint(graphics);
-        if(Utilities.useBetterSymbols){
+        if(currentlyUsesAnsiSymbols){
             graphics.drawArc(5 - (size.height / 3) / 2, 0, size.height / 3, size.height, 90, -180);
             graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, 0, (int) (size.width * 1.6), (int) (size.height * 1.7), 90, -65);
             graphics.drawArc(5 - ((int) (size.width * 1.6)) / 2, size.height - ((int) (size.height * 1.7)), (int) (size.width * 1.6), (int) (size.height * 1.7), -90, 65);

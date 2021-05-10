@@ -51,7 +51,8 @@ public abstract class AbstractGate extends Gate implements Configurable {
 
     @Override
     protected void checkSymbols() {
-        if (currentlyUsesBetterSymbols != Utilities.useBetterSymbols) {
+        if (currentlyUsesAnsiSymbols != Utilities.useAnsiSymbols()) {
+            currentlyUsesAnsiSymbols = Utilities.useAnsiSymbols();
             recalcSize();
             inputs.setContactLocations();
             output.setLocation(new Point(this.size.width, this.size.height / 2));
@@ -61,7 +62,6 @@ public abstract class AbstractGate extends Gate implements Configurable {
                 }
             }
         }
-        super.checkSymbols();
     }
 
     @Override
@@ -71,7 +71,7 @@ public abstract class AbstractGate extends Gate implements Configurable {
         if (cls.equals(NandGate.class) || cls.equals(NorGate.class) || cls.equals(XnorGate.class))
             ContactUtilities.paintSolderingJoint(graphics, 5, 3, output);
         else ContactUtilities.paintSolderingJoint(graphics, 5, 10, output);
-        if (currentlyUsesBetterSymbols) {
+        if (currentlyUsesAnsiSymbols) {
             if (cls.equals(OrGate.class) || cls.equals(NorGate.class) || cls.equals(XorGate.class) || cls.equals(XnorGate.class)) {
                 inputs.paintSolderingJoints(graphics, 9, 10);
             } else {

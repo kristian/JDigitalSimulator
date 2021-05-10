@@ -59,7 +59,8 @@ public class NotGate extends Gate {
 
     @Override
     protected void checkSymbols() {
-        if (currentlyUsesBetterSymbols != Utilities.useBetterSymbols) {
+        if (currentlyUsesAnsiSymbols != Utilities.useAnsiSymbols()) {
+            currentlyUsesAnsiSymbols = Utilities.useAnsiSymbols();
             recalcSize();
             input.setLocation(new Point(0, this.size.height / 2));
             output.setLocation(new Point(this.size.width, this.size.height / 2));
@@ -69,14 +70,13 @@ public class NotGate extends Gate {
                 }
             }
         }
-        super.checkSymbols();
     }
 
     @Override
     public void paint(Graphics graphics) {
         super.paint(graphics);
         ContactUtilities.paintSolderingJoints(graphics, contacts);
-        if (Utilities.useBetterSymbols) {
+        if (currentlyUsesAnsiSymbols) {
             graphics.drawPolyline(new int[]{5, size.width - 11, 5, 5}, new int[]{0, size.height / 2, size.height, 0}, 4);
         } else {
             paintLabel(graphics, "1");

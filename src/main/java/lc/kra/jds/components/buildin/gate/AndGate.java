@@ -17,7 +17,6 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import lc.kra.jds.Utilities;
 import lc.kra.jds.Utilities.TranslationType;
 import lc.kra.jds.contacts.Contact;
 
@@ -38,7 +37,7 @@ public class AndGate extends AbstractGate {
 
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
-		if(Utilities.useBetterSymbols){
+		if(currentlyUsesAnsiSymbols){
 			int transition = size.width - size.height / 2 - 11;
 			graphics.drawPolyline(new int[]{transition, 5, 5, transition}, new int[]{0, 0, size.height, size.height}, 4);
 			graphics.drawArc(transition - size.height / 2, 0, size.height, size.height, 90, -180);

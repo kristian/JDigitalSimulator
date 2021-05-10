@@ -33,14 +33,14 @@ public abstract class Gate extends Component implements Sociable {
     private static final long serialVersionUID = 2l;
 
     protected Dimension size;
-    protected boolean currentlyUsesBetterSymbols = true;
+    protected boolean currentlyUsesAnsiSymbols = true;
 
     public Gate() {
         recalcSize();
     }
 
     protected void recalcSize() {
-        if (Utilities.useBetterSymbols) {
+        if (currentlyUsesAnsiSymbols) {
             if (this.getClass() == NotGate.class) {
                 size = new Dimension(45, 35);
             } else {
@@ -53,16 +53,16 @@ public abstract class Gate extends Component implements Sociable {
 
     @Override
     public void paint(Graphics graphics) {
-        graphics.setColor(Color.BLACK);
         checkSymbols();
-        if (!currentlyUsesBetterSymbols) {
+        graphics.setColor(Color.BLACK);
+        if (!currentlyUsesAnsiSymbols) {
             graphics.drawRect(5, 0, size.width - 15, size.height);
         }
     }
 
     protected void checkSymbols() {
-        if (currentlyUsesBetterSymbols != Utilities.useBetterSymbols) {
-            currentlyUsesBetterSymbols = Utilities.useBetterSymbols;
+        if (currentlyUsesAnsiSymbols != Utilities.useAnsiSymbols()) {
+            currentlyUsesAnsiSymbols = Utilities.useAnsiSymbols();
             recalcSize();
         }
     }

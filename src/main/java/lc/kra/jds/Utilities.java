@@ -57,7 +57,7 @@ public final class Utilities {
 
     private static Properties configuration = new Properties();
 
-    public static boolean useBetterSymbols = true;
+    private static boolean useAnsiSymbols = true;
 
     public static Object copy(Object object) throws CloneNotSupportedException { //deep clone using serilization
         Object copy = null;
@@ -147,6 +147,14 @@ public final class Utilities {
                     return null;
             }
         else return MessageFormat.format(bundle.getString(key), variables);
+    }
+
+    public static boolean useAnsiSymbols() {
+        return useAnsiSymbols;
+    }
+
+    public static void setUseAnsiSymbols(boolean useAnsiSymbols) {
+        Utilities.useAnsiSymbols = useAnsiSymbols;
     }
 
     public static URL getResource(String name) {

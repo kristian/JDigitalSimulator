@@ -582,7 +582,7 @@ public class Application extends JFrame {
                 final JComboBox<String> symbols = Guitilities.addGridPairLine(symbolsPane, 0, new JLabel(getTranslation("properties.symbols.name")), new JComboBox<String>());
                 symbols.addItem("ANSI/IEEE Std 91/91a-1991");
                 symbols.addItem("IEC 60617-12 : 1997");
-                symbols.setSelectedIndex(useBetterSymbols ? 0 : 1);
+                symbols.setSelectedIndex(useAnsiSymbols() ? 0 : 1);
                 centerPane.add(symbolsPane);
 
                 JPanel bottomPane = Guitilities.createGradientFooter();
@@ -610,16 +610,16 @@ public class Application extends JFrame {
                             }
                         switch (symbols.getSelectedIndex()) {
                             case 0:
-                                if (!useBetterSymbols) {
+                                if (!useAnsiSymbols()) {
                                     JOptionPane.showMessageDialog(dialog, getTranslation("properties.symbols.info"));
-                                    useBetterSymbols = true;
+                                    setUseAnsiSymbols(true);
                                     Utilities.setConfiguration(CONFIGURATION_BETTER_SYMBOLS, "true");
                                 }
                                 break;
                             case 1:
-                                if (useBetterSymbols) {
+                                if (useAnsiSymbols()) {
                                     JOptionPane.showMessageDialog(dialog, getTranslation("properties.symbols.info"));
-                                    useBetterSymbols = false;
+                                    setUseAnsiSymbols(false);
                                     Utilities.setConfiguration(CONFIGURATION_BETTER_SYMBOLS, "false");
                                     break;
                                 }
@@ -692,7 +692,7 @@ public class Application extends JFrame {
         display.add(createMenuItem("window.symbols", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                useBetterSymbols = !useBetterSymbols;
+                setUseAnsiSymbols(!useAnsiSymbols());
                 revalidate();
                 repaint();
             }
@@ -1496,9 +1496,9 @@ public class Application extends JFrame {
         String configBetterSymbols = Utilities.getConfiguration(CONFIGURATION_BETTER_SYMBOLS);
         if (configBetterSymbols != null) {
             if (configBetterSymbols.equals("true")) {
-                useBetterSymbols = true;
+                setUseAnsiSymbols(true);
             } else if (configBetterSymbols.equals("false")) {
-                useBetterSymbols = false;
+                setUseAnsiSymbols(false);
             }
         }
         Application application = new Application();
