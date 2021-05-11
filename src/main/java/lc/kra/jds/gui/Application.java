@@ -107,18 +107,18 @@ public class Application extends JFrame {
         this.add(toolbar = createToolBar(), BorderLayout.NORTH);
         this.setSize(new Dimension(1000, 600));
         this.setLocationByPlatform(true);
-//        if (!hasConfiguration(CONFIGURATION_WINDOW_MAXIMIZED) || !Boolean.parseBoolean(getConfiguration(CONFIGURATION_WINDOW_MAXIMIZED))) {
-//            if (hasConfiguration(CONFIGURATION_WINDOW_SIZE)) {
-//                String[] size = getConfiguration(CONFIGURATION_WINDOW_SIZE).split(", ", 3);
-//                if (size.length == 2 && Utilities.isNumeric(size[0]) && Utilities.isNumeric(size[1]))
-//                    this.setSize(new Dimension(Integer.parseInt(size[0]), Integer.parseInt(size[1])));
-//            }
-//            if (hasConfiguration(CONFIGURATION_WINDOW_LOCATION)) {
-//                String[] location = getConfiguration(CONFIGURATION_WINDOW_LOCATION).split(", ", 3);
-//                if (location.length == 2 && Utilities.isNumeric(location[0]) && Utilities.isNumeric(location[1]))
-//                    this.setLocation(Integer.parseInt(location[0]), Integer.parseInt(location[1]));
-//            }
-//        } else this.setExtendedState(MAXIMIZED_BOTH);
+        if (!hasConfiguration(CONFIGURATION_WINDOW_MAXIMIZED) || !Boolean.parseBoolean(getConfiguration(CONFIGURATION_WINDOW_MAXIMIZED))) {
+            if (hasConfiguration(CONFIGURATION_WINDOW_SIZE)) {
+                String[] size = getConfiguration(CONFIGURATION_WINDOW_SIZE).split(", ", 3);
+                if (size.length == 2 && Utilities.isNumeric(size[0]) && Utilities.isNumeric(size[1]))
+                    this.setSize(new Dimension(Integer.parseInt(size[0]), Integer.parseInt(size[1])));
+            }
+            if (hasConfiguration(CONFIGURATION_WINDOW_LOCATION)) {
+                String[] location = getConfiguration(CONFIGURATION_WINDOW_LOCATION).split(", ", 3);
+                if (location.length == 2 && Utilities.isNumeric(location[0]) && Utilities.isNumeric(location[1]))
+                    this.setLocation(Integer.parseInt(location[0]), Integer.parseInt(location[1]));
+            }
+        } else this.setExtendedState(MAXIMIZED_BOTH);
         this.add(createSplitPane(JSplitPane.VERTICAL_SPLIT, Guitilities.getActualSize(this).height - 200, true, 0.95d, createSplitPane(JSplitPane.HORIZONTAL_SPLIT, 200, true, 0.1d, createSidePanel(), new JScrollPane(desktop = createDesktopPanel())), new JScrollPane(oscilloscope = createOscilloscope())), BorderLayout.CENTER);
         this.setToolBarButtonHeight(40);
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
