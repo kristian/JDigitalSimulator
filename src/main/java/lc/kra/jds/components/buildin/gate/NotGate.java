@@ -25,24 +25,20 @@ import lc.kra.jds.contacts.ContactUtilities;
 import lc.kra.jds.contacts.InputContact;
 import lc.kra.jds.contacts.OutputContact;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Point;
 
 import static lc.kra.jds.Utilities.getTranslation;
 
 /**
  * NOT-Gate (build-in component)
- *
- * @author Kristian Kraljic (kris@kra.lc); Raik Rohde
+ * @author Kristian Kraljic (kris@kra.lc)
  */
 public class NotGate extends Gate {
     private static final long serialVersionUID = 2l;
 
     private static final String KEY;
-
-    static {
-        KEY = "component.gate." + NotGate.class.getSimpleName().toLowerCase();
-    }
-
+    static { KEY = "component.gate."+NotGate.class.getSimpleName().toLowerCase(); }
     public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.gate", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
     private InputContact input;
@@ -50,12 +46,11 @@ public class NotGate extends Gate {
     private Contact[] contacts;
 
     public NotGate() {
-        input = new InputContact(this, new Point(0, size.height / 2));
-        output = new OutputContact(this, new Point(size.width, size.height / 2));
+        input = new InputContact(this, new Point(0, size.height/2));
+        output = new OutputContact(this, new Point(size.width, size.height/2));
         output.setCharged(true);
         contacts = new Contact[]{input, output};
     }
-
 
     @Override
     protected void checkSymbols() {
@@ -72,8 +67,7 @@ public class NotGate extends Gate {
         }
     }
 
-    @Override
-    public void paint(Graphics graphics) {
+    @Override public void paint(Graphics graphics) {
         super.paint(graphics);
         ContactUtilities.paintSolderingJoints(graphics, contacts);
         if (currentlyUsesAnsiSymbols) {
@@ -84,11 +78,8 @@ public class NotGate extends Gate {
         paintNot(graphics);
     }
 
-    @Override
-    public Contact[] getContacts() { return contacts; }
-
-    @Override
-    public void calculate() {
+    @Override public Contact[] getContacts() { return contacts; }
+    @Override public void calculate() {
         output.setCharged(!input.isCharged());
     }
 }

@@ -20,28 +20,22 @@ package lc.kra.jds.components.buildin.gate;
 import lc.kra.jds.Utilities.TranslationType;
 import lc.kra.jds.contacts.Contact;
 
-import java.awt.*;
+import java.awt.Graphics;
 
 import static lc.kra.jds.Utilities.getTranslation;
 
 /**
  * OR-Gate (build-in component)
- *
- * @author Kristian Kraljic (kris@kra.lc); Raik Rohde
+ * @author Kristian Kraljic (kris@kra.lc)
  */
 public class OrGate extends AbstractGate {
     private static final long serialVersionUID = 2l;
 
     private static final String KEY;
-
-    static {
-        KEY = "component.gate." + OrGate.class.getSimpleName().toLowerCase();
-    }
-
+    static { KEY = "component.gate."+OrGate.class.getSimpleName().toLowerCase(); }
     public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.gate", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
-    @Override
-    public void paint(Graphics graphics) {
+    @Override public void paint(Graphics graphics) {
         super.paint(graphics);
         if(currentlyUsesAnsiSymbols){
             graphics.drawArc(5 - (size.height / 3) / 2, 0, size.height / 3, size.height, 90, -180);
@@ -52,10 +46,9 @@ public class OrGate extends AbstractGate {
         }
     }
 
-    @Override
-    public void calculate() {
-        for (Contact input : inputs)
-            if (input.isCharged()) {
+    @Override public void calculate() {
+        for(Contact input:inputs)
+            if(input.isCharged()) {
                 output.setCharged(true);
                 return;
             }
