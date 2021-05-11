@@ -24,7 +24,10 @@ import lc.kra.jds.contacts.Contact;
 import lc.kra.jds.contacts.ContactUtilities;
 import lc.kra.jds.contacts.InputContact;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
 
 import static lc.kra.jds.Utilities.getTranslation;
 

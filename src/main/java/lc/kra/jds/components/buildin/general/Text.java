@@ -17,7 +17,12 @@
  */
 package lc.kra.jds.components.buildin.general;
 
-import static lc.kra.jds.Utilities.getTranslation;
+import lc.kra.jds.Utilities;
+import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Configurable;
+import lc.kra.jds.components.Configurable.Option.OptionType;
+import lc.kra.jds.gui.Guitilities;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -28,27 +33,17 @@ import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Map;
 
-import lc.kra.jds.Utilities;
-import lc.kra.jds.Utilities.TranslationType;
-import lc.kra.jds.components.Component;
-import lc.kra.jds.components.Configurable;
-import lc.kra.jds.components.Configurable.Option.OptionType;
-import lc.kra.jds.gui.Guitilities;
+import static lc.kra.jds.Utilities.getTranslation;
 
 /**
  * Text (build-in component)
- *
  * @author Kristian Kraljic (kris@kra.lc)
  */
 public class Text extends Component implements Configurable {
     private static final long serialVersionUID = 2l;
 
     private static final String KEY;
-
-    static {
-        KEY = "component.general." + Text.class.getSimpleName().toLowerCase();
-    }
-
+    static { KEY = "component.general."+Text.class.getSimpleName().toLowerCase(); }
     public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.general", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
     private Dimension size;
@@ -62,40 +57,28 @@ public class Text extends Component implements Configurable {
         size = Guitilities.getStringBounds(font, text);
     }
 
-    @Override
-    public void paint(Graphics graphics) {
+    @Override public void paint(Graphics graphics) {
         graphics.setColor(Color.BLACK);
         graphics.setFont(font);
         FontMetrics metrics = graphics.getFontMetrics();
-        graphics.drawString(text, 0, size.height / 2 + metrics.getAscent() / 2);
+        graphics.drawString(text, 0, size.height/2+metrics.getAscent()/2);
     }
 
-    @Override
-    public Dimension getSize() { return size; }
+    @Override public Dimension getSize() { return size; }
+    @Override public void calculate() { } //there is nothing to calculate
 
-    @Override
-    public void calculate() { } //there is nothing to calculate
-
-    @Override
-    public Option[] getOptions() {
-        return new Option[]{new Option("text", Utilities.getTranslation("component.text.text"), OptionType.TEXT, "Text"),
-                new Option("size", Utilities.getTranslation("component.text.size"), OptionType.NUMBER, 14)};
-    }
-
-    @Override
-    public void setConfiguration(Map<Option, Object> configuration) throws PropertyVetoException {
+    @Override public Option[] getOptions() { return new Option[]{new Option("text", Utilities.getTranslation("component.text.text"), OptionType.TEXT, "Text"),
+            new Option("size", Utilities.getTranslation("component.text.size"), OptionType.NUMBER, 14)}; }
+    @Override public void setConfiguration(Map<Option, Object> configuration) throws PropertyVetoException {
         String text = configuration.get(getOptions()[0]).toString().trim();
-        int size = (Integer) configuration.get(getOptions()[1]);
-        if (text.isEmpty()) throw new PropertyVetoException(Utilities.getTranslation("component.text.text.error"), null);
-        if (size < 5) throw new PropertyVetoException(Utilities.getTranslation("component.text.size.minimum", 5), null);
-        if (size > 72) throw new PropertyVetoException(Utilities.getTranslation("component.text.size.maximum", 72), null);
-        this.text = text;
-        this.size = Guitilities.getStringBounds(font, text);
+        int size = (Integer)configuration.get(getOptions()[1]);
+        if(text.isEmpty()) throw new PropertyVetoException(Utilities.getTranslation("component.text.text.error"), null);
+        if(size<5 ) throw new PropertyVetoException(Utilities.getTranslation("component.text.size.minimum", 5 ), null);
+        if(size>72) throw new PropertyVetoException(Utilities.getTranslation("component.text.size.maximum", 72), null);
+        this.text = text; this.size = Guitilities.getStringBounds(font, text);
         this.font = new Font("Dialog", Font.BOLD, size);
     }
-
-    @Override
-    public Map<Option, Object> getConfiguration() {
+    @Override public Map<Option, Object> getConfiguration() {
         Map<Option, Object> configuration = new HashMap<Option, Object>();
         configuration.put(getOptions()[0], text);
         configuration.put(getOptions()[1], font.getSize());
