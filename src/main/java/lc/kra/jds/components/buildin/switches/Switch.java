@@ -38,40 +38,40 @@ import static lc.kra.jds.Utilities.getTranslation;
  * @author Kristian Kraljic (kris@kra.lc)
  */
 public class Switch extends Component implements Sociable, Interactable {
-    private static final long serialVersionUID = 2l;
+	private static final long serialVersionUID = 2l;
 
-    private static final String KEY;
-    static { KEY = "component.switches."+Switch.class.getSimpleName().toLowerCase(); }
-    public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.switches", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
+	private static final String KEY;
+	static { KEY = "component.switches."+Switch.class.getSimpleName().toLowerCase(); }
+	public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.switches", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
-    private Dimension size;
+	private Dimension size;
 
-    private OutputContact output;
-    private Contact[] contacts;
+	private OutputContact output;
+	private Contact[] contacts;
 
-    public Switch() {
-        size = new Dimension(28, 28);
-        output = new OutputContact(this, new Point(size.width, size.height/2));
-        output.setCharged(false);
-        contacts = new Contact[] {output};
-    }
+	public Switch() {
+		size = new Dimension(28, 28);
+		output = new OutputContact(this, new Point(size.width, size.height/2));
+		output.setCharged(false);
+		contacts = new Contact[] {output};
+	}
 
-    @Override public void paint(Graphics graphics) {
-        graphics.setColor(Color.BLACK);
-        if(output.isCharged())
-            graphics.drawLine(10, 5, 23, 14);
-        else graphics.drawLine(10, 23, 23, 14);
-        graphics.drawString("1", 0, 10);
-        graphics.drawString("0", 0, 28);
-        ContactUtilities.paintSolderingJoints(graphics, contacts);
-    }
+	@Override public void paint(Graphics graphics) {
+		graphics.setColor(Color.BLACK);
+		if(output.isCharged())
+			graphics.drawLine(10, 5, 23, 14);
+		else graphics.drawLine(10, 23, 23, 14);
+		graphics.drawString("1", 0, 10);
+		graphics.drawString("0", 0, 28);
+		ContactUtilities.paintSolderingJoints(graphics, contacts);
+	}
 
-    @Override public Dimension getSize() { return size; }
-    @Override public Contact[] getContacts() { return contacts;	}
-    @Override public void calculate() { } //the output is always charged like the switch
+	@Override public Dimension getSize() { return size; }
+	@Override public Contact[] getContacts() { return contacts;	}
+	@Override public void calculate() { } //the output is always charged like the switch
 
-    @Override public void mouseClick(MouseEvent event) { output.setCharged(!output.isCharged()); }
-    @Override public void mouseDoubleClick(MouseEvent event) { }
-    @Override public void mouseDown(MouseEvent event) { }
-    @Override public void mouseUp(MouseEvent event) { }
+	@Override public void mouseClick(MouseEvent event) { output.setCharged(!output.isCharged()); }
+	@Override public void mouseDoubleClick(MouseEvent event) { }
+	@Override public void mouseDown(MouseEvent event) { }
+	@Override public void mouseUp(MouseEvent event) { }
 }

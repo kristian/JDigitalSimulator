@@ -35,51 +35,51 @@ import static lc.kra.jds.Utilities.getTranslation;
  * @author Kristian Kraljic (kris@kra.lc)
  */
 public class NotGate extends Gate {
-    private static final long serialVersionUID = 2l;
+	private static final long serialVersionUID = 2l;
 
-    private static final String KEY;
-    static { KEY = "component.gate."+NotGate.class.getSimpleName().toLowerCase(); }
-    public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.gate", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
+	private static final String KEY;
+	static { KEY = "component.gate."+NotGate.class.getSimpleName().toLowerCase(); }
+	public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.gate", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
-    private InputContact input;
-    private OutputContact output;
-    private Contact[] contacts;
+	private InputContact input;
+	private OutputContact output;
+	private Contact[] contacts;
 
-    public NotGate() {
-        input = new InputContact(this, new Point(0, size.height/2));
-        output = new OutputContact(this, new Point(size.width, size.height/2));
-        output.setCharged(true);
-        contacts = new Contact[]{input, output};
-    }
+	public NotGate() {
+		input = new InputContact(this, new Point(0, size.height/2));
+		output = new OutputContact(this, new Point(size.width, size.height/2));
+		output.setCharged(true);
+		contacts = new Contact[]{input, output};
+	}
 
-    @Override
-    protected void checkSymbols() {
-        if (currentlyUsesAnsiSymbols != Utilities.useAnsiSymbols()) {
-            currentlyUsesAnsiSymbols = Utilities.useAnsiSymbols();
-            recalcSize();
-            input.setLocation(new Point(0, this.size.height / 2));
-            output.setLocation(new Point(this.size.width, this.size.height / 2));
-            for (Contact contact : contacts) {
-                for (Wire wire : contact.getWires()) {
-                    wire.revalidate();
-                }
-            }
-        }
-    }
+	@Override
+	protected void checkSymbols() {
+		if (currentlyUsesAnsiSymbols != Utilities.useAnsiSymbols()) {
+			currentlyUsesAnsiSymbols = Utilities.useAnsiSymbols();
+			recalcSize();
+			input.setLocation(new Point(0, this.size.height / 2));
+			output.setLocation(new Point(this.size.width, this.size.height / 2));
+			for (Contact contact : contacts) {
+				for (Wire wire : contact.getWires()) {
+					wire.revalidate();
+				}
+			}
+		}
+	}
 
-    @Override public void paint(Graphics graphics) {
-        super.paint(graphics);
-        ContactUtilities.paintSolderingJoints(graphics, contacts);
-        if (currentlyUsesAnsiSymbols) {
-            graphics.drawPolyline(new int[]{5, size.width - 11, 5, 5}, new int[]{0, size.height / 2, size.height, 0}, 4);
-        } else {
-            paintLabel(graphics, "1");
-        }
-        paintNot(graphics);
-    }
+	@Override public void paint(Graphics graphics) {
+		super.paint(graphics);
+		ContactUtilities.paintSolderingJoints(graphics, contacts);
+		if (currentlyUsesAnsiSymbols) {
+			graphics.drawPolyline(new int[]{5, size.width - 11, 5, 5}, new int[]{0, size.height / 2, size.height, 0}, 4);
+		} else {
+			paintLabel(graphics, "1");
+		}
+		paintNot(graphics);
+	}
 
-    @Override public Contact[] getContacts() { return contacts; }
-    @Override public void calculate() {
-        output.setCharged(!input.isCharged());
-    }
+	@Override public Contact[] getContacts() { return contacts; }
+	@Override public void calculate() {
+		output.setCharged(!input.isCharged());
+	}
 }
