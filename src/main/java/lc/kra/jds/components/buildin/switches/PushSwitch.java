@@ -43,58 +43,58 @@ import static lc.kra.jds.Utilities.getTranslation;
  * @author Kristian Kraljic (kris@kra.lc)
  */
 public class PushSwitch extends Component implements Sociable, Interactable, Configurable {
-    private static final long serialVersionUID = 2l;
+	private static final long serialVersionUID = 2l;
 
-    private static final String KEY;
-    static { KEY = "component.switches."+PushSwitch.class.getSimpleName().toLowerCase(); }
-    public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.switches", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
+	private static final String KEY;
+	static { KEY = "component.switches."+PushSwitch.class.getSimpleName().toLowerCase(); }
+	public static final ComponentAttributes componentAttributes = new ComponentAttributes(KEY, getTranslation(KEY), "group.switches", getTranslation(KEY, TranslationType.DESCRIPTION), "Kristian Kraljic (kris@kra.lc)", 1);
 
-    private Dimension size;
+	private Dimension size;
 
-    private boolean position;
+	private boolean position;
 
-    private OutputContact output;
-    private Contact[] contacts;
+	private OutputContact output;
+	private Contact[] contacts;
 
-    public PushSwitch() {
-        size = new Dimension(28, 28);
-        output = new OutputContact(this, new Point(size.width, size.height/2));
-        output.setCharged(position);
-        contacts = new Contact[] {output};
-    }
+	public PushSwitch() {
+		size = new Dimension(28, 28);
+		output = new OutputContact(this, new Point(size.width, size.height/2));
+		output.setCharged(position);
+		contacts = new Contact[] {output};
+	}
 
-    @Override public void paint(Graphics graphics) {
-        graphics.setColor(Color.BLACK);
-        if(output.isCharged()) {
-            graphics.drawLine(10, 5, 23, 14);
-            graphics.drawLine(11, 0, 21, 0);
-            graphics.drawLine(14, 0, 14, 7);
-            graphics.drawLine(18, 0, 18, 10);
-        } else {
-            graphics.drawLine(10, 23, 23, 14);
-            graphics.drawLine(11, 10, 21, 10);
-            graphics.drawLine(14, 10, 14, 20);
-            graphics.drawLine(18, 10, 18, 17);
-        }
-        graphics.drawString("1", 0, 10);
-        graphics.drawString("0", 0, 28);
-        ContactUtilities.paintSolderingJoints(graphics, contacts);
-    }
+	@Override public void paint(Graphics graphics) {
+		graphics.setColor(Color.BLACK);
+		if(output.isCharged()) {
+			graphics.drawLine(10, 5, 23, 14);
+			graphics.drawLine(11, 0, 21, 0);
+			graphics.drawLine(14, 0, 14, 7);
+			graphics.drawLine(18, 0, 18, 10);
+		} else {
+			graphics.drawLine(10, 23, 23, 14);
+			graphics.drawLine(11, 10, 21, 10);
+			graphics.drawLine(14, 10, 14, 20);
+			graphics.drawLine(18, 10, 18, 17);
+		}
+		graphics.drawString("1", 0, 10);
+		graphics.drawString("0", 0, 28);
+		ContactUtilities.paintSolderingJoints(graphics, contacts);
+	}
 
-    @Override public Dimension getSize() { return size; }
-    @Override public Contact[] getContacts() { return contacts;	}
-    @Override public void calculate() { } //the output is always charged like the switch
+	@Override public Dimension getSize() { return size; }
+	@Override public Contact[] getContacts() { return contacts;	}
+	@Override public void calculate() { } //the output is always charged like the switch
 
-    @Override public void mouseClick(MouseEvent event) { }
-    @Override public void mouseDoubleClick(MouseEvent event) { }
-    @Override public void mouseDown(MouseEvent event) { output.setCharged(!position); }
-    @Override public void mouseUp(MouseEvent event) { output.setCharged(position); }
+	@Override public void mouseClick(MouseEvent event) { }
+	@Override public void mouseDoubleClick(MouseEvent event) { }
+	@Override public void mouseDown(MouseEvent event) { output.setCharged(!position); }
+	@Override public void mouseUp(MouseEvent event) { output.setCharged(position); }
 
-    @Override public Option[] getOptions() { return new Option[]{new Option("position", Utilities.getTranslation("component.switch.position"), OptionType.BOOLEAN, false)}; }
-    @Override public void setConfiguration(Map<Option, Object> configuration) { output.setCharged(position = (Boolean)configuration.get(getOptions()[0])); }
-    @Override public Map<Option, Object> getConfiguration() {
-        Map<Option, Object> configuration = new HashMap<Option, Object>();
-        configuration.put(getOptions()[0], position);
-        return configuration;
-    }
+	@Override public Option[] getOptions() { return new Option[]{new Option("position", Utilities.getTranslation("component.switch.position"), OptionType.BOOLEAN, false)}; }
+	@Override public void setConfiguration(Map<Option, Object> configuration) { output.setCharged(position = (Boolean)configuration.get(getOptions()[0])); }
+	@Override public Map<Option, Object> getConfiguration() {
+		Map<Option, Object> configuration = new HashMap<Option, Object>();
+		configuration.put(getOptions()[0], position);
+		return configuration;
+	}
 }

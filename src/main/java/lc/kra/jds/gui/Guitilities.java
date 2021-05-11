@@ -106,9 +106,9 @@ public class Guitilities {
 
 				public static final String FILECHOOSER_READONLY = "FileChooser.readOnly";
 
-				public static GridBagConstraints pair_left_constraint       = new GridBagConstraints(0, 0, 1, 1, 0.1d, 0d, GridBagConstraints.LINE_END        , GridBagConstraints.NONE, new Insets(0, 10, 0, 10), 0, 0);
-				public static GridBagConstraints pair_right_constraint      = new GridBagConstraints(1, 0, 1, 1, 0.9d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 0);
-				public static GridBagConstraints pair_additional_constraint = new GridBagConstraints(2, 0, 1, 1, 0.3d, 0d, GridBagConstraints.LINE_START      , GridBagConstraints.NONE, new Insets(0, 10, 0, 10), 0, 0);
+				public static GridBagConstraints pair_left_constraint	   = new GridBagConstraints(0, 0, 1, 1, 0.1d, 0d, GridBagConstraints.LINE_END		, GridBagConstraints.NONE, new Insets(0, 10, 0, 10), 0, 0);
+				public static GridBagConstraints pair_right_constraint	  = new GridBagConstraints(1, 0, 1, 1, 0.9d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 0);
+				public static GridBagConstraints pair_additional_constraint = new GridBagConstraints(2, 0, 1, 1, 0.3d, 0d, GridBagConstraints.LINE_START	  , GridBagConstraints.NONE, new Insets(0, 10, 0, 10), 0, 0);
 				private static final GridBagConstraints PAIR_LEFT_DEFAULT_CONSTRAINT = (GridBagConstraints)pair_left_constraint.clone(),
 												PAIR_RIGHT_DEFAULT_CONSTRAINT = (GridBagConstraints)pair_right_constraint.clone(),
 												PAIR_ADDITIONAL_DEFAULT_CONSTRAINT = (GridBagConstraints)pair_additional_constraint.clone();

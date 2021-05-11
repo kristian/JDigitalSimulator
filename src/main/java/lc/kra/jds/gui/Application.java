@@ -531,10 +531,10 @@ public class Application extends JFrame {
 
 																centerPane.add(Guitilities.createSeparator(getTranslation("properties.circuit")));
 																JPanel circuitPane = new JPanel(new GridBagLayout());
-																final JTextField         circuitName = Guitilities.addGridPairLine(circuitPane, 0, new JLabel(getTranslation("properties.circuit.name")), new JTextField(properties.circuit.name));
+																final JTextField		 circuitName = Guitilities.addGridPairLine(circuitPane, 0, new JLabel(getTranslation("properties.circuit.name")), new JTextField(properties.circuit.name));
 																Guitilities.pair_left_constraint.anchor = GridBagConstraints.FIRST_LINE_END;
 																final JScrollPane circuitDescription = Guitilities.addGridPairLine(circuitPane, 1, new JLabel(getTranslation("properties.circuit.description")), new JScrollPane(new JTextArea(properties.circuit.description, 6, 0)));
-																final JTextField      circuitVersion = Guitilities.addGridPairLine(circuitPane, 2, new JLabel(getTranslation("properties.circuit.version")), new JTextField(properties.circuit.version));
+																final JTextField	  circuitVersion = Guitilities.addGridPairLine(circuitPane, 2, new JLabel(getTranslation("properties.circuit.version")), new JTextField(properties.circuit.version));
 																centerPane.add(circuitPane);
 
 																JPanel bottomPane = Guitilities.createGradientFooter();

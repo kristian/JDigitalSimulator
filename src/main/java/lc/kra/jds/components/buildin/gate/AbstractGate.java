@@ -38,65 +38,65 @@ import java.util.Map;
  * @author Kristian Kraljic (kris@kra.lc)
  */
 public abstract class AbstractGate extends Gate implements Configurable {
-    private static final long serialVersionUID = 2l;
+	private static final long serialVersionUID = 2l;
 
-    protected ContactList<InputContact> inputs;
-    protected OutputContact output;
-    private Contact[] contacts;
+	protected ContactList<InputContact> inputs;
+	protected OutputContact output;
+	private Contact[] contacts;
 
-    public AbstractGate() {
-        inputs = new ContactList<InputContact>(this, InputContact.class, (Integer)getOptions()[0].getDefault());
-        output = new OutputContact(this, new Point(size.width, size.height/2));
-        output.setCharged(false);
-        contacts = ContactUtilities.concatenateContacts(output, inputs.toArray());
-    }
+	public AbstractGate() {
+		inputs = new ContactList<InputContact>(this, InputContact.class, (Integer)getOptions()[0].getDefault());
+		output = new OutputContact(this, new Point(size.width, size.height/2));
+		output.setCharged(false);
+		contacts = ContactUtilities.concatenateContacts(output, inputs.toArray());
+	}
 
-    @Override
-    protected void checkSymbols() {
-        if (currentlyUsesAnsiSymbols != Utilities.useAnsiSymbols()) {
-            currentlyUsesAnsiSymbols = Utilities.useAnsiSymbols();
-            recalcSize();
-            inputs.setContactLocations();
-            output.setLocation(new Point(this.size.width, this.size.height / 2));
-            for (Contact contact : contacts) {
-                for (Wire wire : contact.getWires()) {
-                    wire.revalidate();
-                }
-            }
-        }
-    }
+	@Override
+	protected void checkSymbols() {
+		if (currentlyUsesAnsiSymbols != Utilities.useAnsiSymbols()) {
+			currentlyUsesAnsiSymbols = Utilities.useAnsiSymbols();
+			recalcSize();
+			inputs.setContactLocations();
+			output.setLocation(new Point(this.size.width, this.size.height / 2));
+			for (Contact contact : contacts) {
+				for (Wire wire : contact.getWires()) {
+					wire.revalidate();
+				}
+			}
+		}
+	}
 
-    @Override public void paint(Graphics graphics) {
-        super.paint(graphics);
-        Class<? extends AbstractGate> cls = this.getClass();
-        if (cls.equals(NandGate.class) || cls.equals(NorGate.class) || cls.equals(XnorGate.class))
-            ContactUtilities.paintSolderingJoint(graphics, 5, 3, output);
-        else ContactUtilities.paintSolderingJoint(graphics, 5, 10, output);
-        if (currentlyUsesAnsiSymbols) {
-            if (cls.equals(OrGate.class) || cls.equals(NorGate.class) || cls.equals(XorGate.class) || cls.equals(XnorGate.class)) {
-                inputs.paintSolderingJoints(graphics, 9, 10);
-            } else {
-                inputs.paintSolderingJoints(graphics, 5, 10);
-            }
-        } else {
-            inputs.paintSolderingJoints(graphics, 5, 10);
-        }
-    }
+	@Override public void paint(Graphics graphics) {
+		super.paint(graphics);
+		Class<? extends AbstractGate> cls = this.getClass();
+		if (cls.equals(NandGate.class) || cls.equals(NorGate.class) || cls.equals(XnorGate.class))
+			ContactUtilities.paintSolderingJoint(graphics, 5, 3, output);
+		else ContactUtilities.paintSolderingJoint(graphics, 5, 10, output);
+		if (currentlyUsesAnsiSymbols) {
+			if (cls.equals(OrGate.class) || cls.equals(NorGate.class) || cls.equals(XorGate.class) || cls.equals(XnorGate.class)) {
+				inputs.paintSolderingJoints(graphics, 9, 10);
+			} else {
+				inputs.paintSolderingJoints(graphics, 5, 10);
+			}
+		} else {
+			inputs.paintSolderingJoints(graphics, 5, 10);
+		}
+	}
 
-    @Override public Contact[] getContacts() { return contacts; }
-    @Override public abstract void calculate();
+	@Override public Contact[] getContacts() { return contacts; }
+	@Override public abstract void calculate();
 
-    @Override public Option[] getOptions() { return new Option[]{new Option("input_count", Utilities.getTranslation("contact.input.count"), OptionType.NUMBER, 2)}; }
-    @Override public void setConfiguration(Map<Option, Object> configuration) throws PropertyVetoException {
-        int inputCount = (Integer)configuration.get(getOptions()[0]);
-        if(inputCount<2) throw new PropertyVetoException(Utilities.getTranslation("contact.input.minimum", 2), null);
-        if(inputCount>8) throw new PropertyVetoException(Utilities.getTranslation("contact.input.maximum", 8), null);
-        inputs.setContacts(inputCount); inputs.setContactLocations();
-        contacts = ContactUtilities.concatenateContacts(output, inputs.toArray());
-    }
-    @Override public Map<Option, Object> getConfiguration() {
-        Map<Option, Object> configuration = new HashMap<Option, Object>();
-        configuration.put(getOptions()[0], inputs.getContactsCount());
-        return configuration;
-    }
+	@Override public Option[] getOptions() { return new Option[]{new Option("input_count", Utilities.getTranslation("contact.input.count"), OptionType.NUMBER, 2)}; }
+	@Override public void setConfiguration(Map<Option, Object> configuration) throws PropertyVetoException {
+		int inputCount = (Integer)configuration.get(getOptions()[0]);
+		if(inputCount<2) throw new PropertyVetoException(Utilities.getTranslation("contact.input.minimum", 2), null);
+		if(inputCount>8) throw new PropertyVetoException(Utilities.getTranslation("contact.input.maximum", 8), null);
+		inputs.setContacts(inputCount); inputs.setContactLocations();
+		contacts = ContactUtilities.concatenateContacts(output, inputs.toArray());
+	}
+	@Override public Map<Option, Object> getConfiguration() {
+		Map<Option, Object> configuration = new HashMap<Option, Object>();
+		configuration.put(getOptions()[0], inputs.getContactsCount());
+		return configuration;
+	}
 }
