@@ -2,9 +2,9 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>lc.kra.jds</groupId>
-	<artifactId>jds</artifactId>
-	<version>2.1.1</version>
+    <groupId>lc.kra.jds</groupId>
+    <artifactId>jds</artifactId>
+    <version>2.0.3</version>
 
 	<name>JDigitalSimulator</name>
 	<url>http://kra.lc/projects/jdigitalsimulator/</url>
@@ -54,7 +54,8 @@
 						</goals>
 						<configuration>
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>lc.kra.jds.gui.Application</mainClass>
 									<manifestEntries>
 										<Application-Name>JDitigalSimulator</Application-Name>
