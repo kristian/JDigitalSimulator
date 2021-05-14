@@ -17,15 +17,15 @@
  */
 package lc.kra.jds.contacts;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+
 import lc.kra.jds.components.Component;
 import lc.kra.jds.components.Wire;
 import lc.kra.jds.exceptions.ForbiddenVoltageLevel;
 import lc.kra.jds.exceptions.LocationOutOfBoundsException;
 import lc.kra.jds.exceptions.WireNotConnectable;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
 
 public class OutputContact extends ComponentContact implements Cloneable, Chargeable {
 	private static final long serialVersionUID = 1l;

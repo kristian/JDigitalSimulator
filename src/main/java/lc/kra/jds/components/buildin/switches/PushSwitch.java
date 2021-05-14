@@ -17,16 +17,7 @@
  */
 package lc.kra.jds.components.buildin.switches;
 
-import lc.kra.jds.Utilities;
-import lc.kra.jds.Utilities.TranslationType;
-import lc.kra.jds.components.Component;
-import lc.kra.jds.components.Configurable;
-import lc.kra.jds.components.Configurable.Option.OptionType;
-import lc.kra.jds.components.Interactable;
-import lc.kra.jds.components.Sociable;
-import lc.kra.jds.contacts.Contact;
-import lc.kra.jds.contacts.ContactUtilities;
-import lc.kra.jds.contacts.OutputContact;
+import static lc.kra.jds.Utilities.*;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -36,7 +27,16 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import static lc.kra.jds.Utilities.getTranslation;
+import lc.kra.jds.Utilities;
+import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Configurable;
+import lc.kra.jds.components.Interactable;
+import lc.kra.jds.components.Sociable;
+import lc.kra.jds.components.Configurable.Option.OptionType;
+import lc.kra.jds.contacts.Contact;
+import lc.kra.jds.contacts.ContactUtilities;
+import lc.kra.jds.contacts.OutputContact;
 
 /**
  * Push-Switch (build-in component)

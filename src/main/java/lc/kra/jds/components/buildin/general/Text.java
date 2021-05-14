@@ -17,12 +17,7 @@
  */
 package lc.kra.jds.components.buildin.general;
 
-import lc.kra.jds.Utilities;
-import lc.kra.jds.Utilities.TranslationType;
-import lc.kra.jds.components.Component;
-import lc.kra.jds.components.Configurable;
-import lc.kra.jds.components.Configurable.Option.OptionType;
-import lc.kra.jds.gui.Guitilities;
+import static lc.kra.jds.Utilities.getTranslation;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,7 +28,12 @@ import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static lc.kra.jds.Utilities.getTranslation;
+import lc.kra.jds.Utilities;
+import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Configurable;
+import lc.kra.jds.components.Configurable.Option.OptionType;
+import lc.kra.jds.gui.Guitilities;
 
 /**
  * Text (build-in component)

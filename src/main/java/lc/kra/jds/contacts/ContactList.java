@@ -17,16 +17,16 @@
  */
 package lc.kra.jds.contacts;
 
-import lc.kra.jds.components.Component;
-import lc.kra.jds.components.Wire;
-import lc.kra.jds.gui.Guitilities;
-
 import java.awt.Graphics;
 import java.awt.Point;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Wire;
+import lc.kra.jds.gui.Guitilities;
 
 public class ContactList<Type extends Contact> implements Cloneable, Serializable, Iterable<Type> {
 	private static final long serialVersionUID = 1l;
@@ -73,8 +73,8 @@ public class ContactList<Type extends Contact> implements Cloneable, Serializabl
 		float intervalX, intervalY, positionX, positionY;
 		intervalX = intervalY = positionX = positionY = 0f;
 		switch(alignment) {
-			case HORIZONTAL: intervalX = (float)(component.getSize().width+1-location.x)/(contacts.length+1); intervalY = 0; break;
-			case VERTICAL:   intervalX = 0; intervalY = (float)(component.getSize().height+1-location.y)/(contacts.length+1); break; }
+		case HORIZONTAL: intervalX = (float)(component.getSize().width+1-location.x)/(contacts.length+1); intervalY = 0; break;
+		case VERTICAL:   intervalX = 0; intervalY = (float)(component.getSize().height+1-location.y)/(contacts.length+1); break; }
 		for(Contact contact:contacts) {
 			positionX += intervalX; positionY += intervalY;
 			contact.setLocation(Guitilities.addPoints(location, new Point((int)positionX,

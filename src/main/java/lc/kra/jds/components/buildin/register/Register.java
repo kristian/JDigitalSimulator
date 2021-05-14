@@ -102,7 +102,7 @@ public abstract class Register extends Component implements Sociable, Configurab
 
 	private void makeShape() {
 		shape = new Polygon(new int[]{9 , 9 , 5 , 5, size.width-5, size.width-5, size.width-9, size.width-9},
-				new int[]{40, 35, 35, 0, 0		   , 35		  , 35		  , 40		  }, 8);
+				new int[]{40, 35, 35, 0, 0           , 35          , 35          , 40          }, 8);
 	}
 
 	protected void setContactLocations(ContactList<?> list) {

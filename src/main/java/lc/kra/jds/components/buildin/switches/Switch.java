@@ -17,13 +17,7 @@
  */
 package lc.kra.jds.components.buildin.switches;
 
-import lc.kra.jds.Utilities.TranslationType;
-import lc.kra.jds.components.Component;
-import lc.kra.jds.components.Interactable;
-import lc.kra.jds.components.Sociable;
-import lc.kra.jds.contacts.Contact;
-import lc.kra.jds.contacts.ContactUtilities;
-import lc.kra.jds.contacts.OutputContact;
+import static lc.kra.jds.Utilities.*;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,7 +25,13 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import static lc.kra.jds.Utilities.getTranslation;
+import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Interactable;
+import lc.kra.jds.components.Sociable;
+import lc.kra.jds.contacts.Contact;
+import lc.kra.jds.contacts.ContactUtilities;
+import lc.kra.jds.contacts.OutputContact;
 
 /**
  * Switch (build-in component)

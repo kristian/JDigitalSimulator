@@ -68,11 +68,11 @@ public abstract class AbstractGate extends Gate implements Configurable {
 	@Override public void paint(Graphics graphics) {
 		super.paint(graphics);
 		Class<? extends AbstractGate> cls = this.getClass();
-		if (cls.equals(NandGate.class) || cls.equals(NorGate.class) || cls.equals(XnorGate.class))
+		if (cls.equals(NandGate.class)||cls.equals(NorGate.class)||cls.equals(XnorGate.class))
 			ContactUtilities.paintSolderingJoint(graphics, 5, 3, output);
 		else ContactUtilities.paintSolderingJoint(graphics, 5, 10, output);
 		if (currentlyUsesAnsiSymbols) {
-			if (cls.equals(OrGate.class) || cls.equals(NorGate.class) || cls.equals(XorGate.class) || cls.equals(XnorGate.class)) {
+			if (cls.equals(OrGate.class)||cls.equals(NorGate.class)||cls.equals(XorGate.class)||cls.equals(XnorGate.class)) {
 				inputs.paintSolderingJoints(graphics, 9, 10);
 			} else {
 				inputs.paintSolderingJoints(graphics, 5, 10);
