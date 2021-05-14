@@ -17,12 +17,12 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import lc.kra.jds.Utilities.TranslationType;
-import lc.kra.jds.contacts.Contact;
+import static lc.kra.jds.Utilities.getTranslation;
 
 import java.awt.Graphics;
 
-import static lc.kra.jds.Utilities.getTranslation;
+import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.contacts.Contact;
 
 /**
  * OR-Gate (build-in component)

@@ -17,11 +17,6 @@
  */
 package lc.kra.jds;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
-import javax.swing.JFileChooser;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -50,26 +45,30 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+import javax.swing.JFileChooser;
+
 public final class Utilities {
 	public static enum TranslationType { TEXT, ALTERNATIVE, TITLE, EXTERNAL, TOOLTIP, DESCRIPTION; }
 
 	public static final String
-			CONFIGURATION_LOCALIZATION_LANGUAGE = "localization.language",
-			CONFIGURATION_LOOK_AND_FEEL_CLASS = "lookandfeel.class",
-			CONFIGURATION_LOOK_AND_FEEL_NAME = "lookandfeel.name",
-												CONFIGURATION_ANSI_SYMBOLS = "symbols.ansi",
-			CONFIGURATION_WINDOW_SIZE = "window.size",
-			CONFIGURATION_WINDOW_LOCATION = "window.location",
-			CONFIGURATION_WINDOW_MAXIMIZED = "window.maximized";
+		CONFIGURATION_LOCALIZATION_LANGUAGE = "localization.language",
+		CONFIGURATION_LOOK_AND_FEEL_CLASS = "lookandfeel.class",
+		CONFIGURATION_LOOK_AND_FEEL_NAME = "lookandfeel.name",
+		CONFIGURATION_ANSI_SYMBOLS = "symbols.ansi",
+		CONFIGURATION_WINDOW_SIZE = "window.size",
+		CONFIGURATION_WINDOW_LOCATION = "window.location",
+		CONFIGURATION_WINDOW_MAXIMIZED = "window.maximized";
 	public static final Locale[] SUPPORTED_LOCALES = {Locale.ENGLISH, Locale.GERMAN};
 
 	private static Locale currentLocale = Locale.getDefault();
 	private static ResourceBundle translationBundle;
 	private static SimpleClassLoader simpleClassLoader;
-
+	
 	private static Properties configuration = new Properties();
-
-	private static boolean useAnsiSymbols = true;
 
 	public static Object copy(Object object) throws CloneNotSupportedException { //deep clone using serilization
 		Object copy = null;
@@ -130,11 +129,18 @@ public final class Utilities {
 			bundle = ResourceBundle.getBundle("lc/kra/jds/TranslationBundle");
 		if(!bundle.containsKey(key))
 			switch(type) {
-				case TEXT: case TITLE: return new StringBuilder("text missing ("+key+")").toString();
-				case ALTERNATIVE: return getTranslation(key);
-				case EXTERNAL: return key;
-				default: return null; }
+			case TEXT: case TITLE: return new StringBuilder("text missing ("+key+")").toString();
+			case ALTERNATIVE: return getTranslation(key);
+			case EXTERNAL: return key;
+			default: return null; }
 		else return MessageFormat.format(bundle.getString(key), variables);
+	}
+
+	public static boolean useAnsiSymbols(){
+		return useAnsiSymbols;
+	}
+	public static void setUseAnsiSymbols(boolean value){
+		useAnsiSymbols = value;
 	}
 
 	public static URL getResource(String name) {
@@ -142,13 +148,6 @@ public final class Utilities {
 			name = "/lc/kra/jds/"+name;
 		return Utilities.class.getResource(name);
 	}
-
-	public static boolean useAnsiSymbols(){
-					return useAnsiSymbols;
-				}
-				public static void setUseAnsiSymbols(boolean value){
-					useAnsiSymbols = value;
-				}
 
 	public static <Type> Type getField(Class<?> cls, String fieldName) { return getField(cls, fieldName, null); }
 	@SuppressWarnings("unchecked") public static <Type> Type getField(Class<?> cls, String fieldName, Type dfault) {
@@ -429,7 +428,7 @@ public final class Utilities {
 			return cls;
 		}
 	}
-
+	
 	public static class AlternateClassLoaderObjectInputStream extends ObjectInputStream {
 		protected final ClassLoader alternateClassLoader;
 		public AlternateClassLoaderObjectInputStream(InputStream in, ClassLoader alternateClassLoader) throws IOException {
@@ -454,7 +453,7 @@ public final class Utilities {
 			return name.replaceFirst("^(\\[L)?"+Pattern.quote(LEGACY_PACKAGE_PREFIX), "$1"+Matcher.quoteReplacement(PACKAGE_PREFIX));
 		}
 	}
-
+	
 	public static URL getLocalPath() {
 		URL path = Utilities.class.getProtectionDomain().getCodeSource().getLocation();
 		try { return new URL(URLDecoder.decode(path.toString(), "UTF-8")); }

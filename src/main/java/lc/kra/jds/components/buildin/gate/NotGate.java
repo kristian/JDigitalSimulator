@@ -17,18 +17,16 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import lc.kra.jds.Utilities;
-import lc.kra.jds.Utilities.TranslationType;
-import lc.kra.jds.components.Wire;
-import lc.kra.jds.contacts.Contact;
-import lc.kra.jds.contacts.ContactUtilities;
-import lc.kra.jds.contacts.InputContact;
-import lc.kra.jds.contacts.OutputContact;
+import static lc.kra.jds.Utilities.*;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
-import static lc.kra.jds.Utilities.getTranslation;
+import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.contacts.Contact;
+import lc.kra.jds.contacts.ContactUtilities;
+import lc.kra.jds.contacts.InputContact;
+import lc.kra.jds.contacts.OutputContact;
 
 /**
  * NOT-Gate (build-in component)

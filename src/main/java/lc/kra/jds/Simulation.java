@@ -17,56 +17,11 @@
  */
 package lc.kra.jds;
 
-import lc.kra.jds.Utilities.LegacyObjectInputStream;
-import lc.kra.jds.Utilities.RememberFileChooser;
-import lc.kra.jds.Utilities.TranslationType;
-import lc.kra.jds.components.Component;
-import lc.kra.jds.components.Component.ComponentFlavor;
-import lc.kra.jds.components.Configurable;
-import lc.kra.jds.components.Configurable.Option;
-import lc.kra.jds.components.Configurable.Option.OptionType;
-import lc.kra.jds.components.Interactable;
-import lc.kra.jds.components.Sociable;
-import lc.kra.jds.components.Wire;
-import lc.kra.jds.components.buildin.display.Voltmeter;
-import lc.kra.jds.components.buildin.external.ExternalSimulation;
-import lc.kra.jds.components.buildin.general.Junction;
-import lc.kra.jds.contacts.Contact;
-import lc.kra.jds.contacts.DragContact;
-import lc.kra.jds.contacts.InputContact;
-import lc.kra.jds.contacts.OutputContact;
-import lc.kra.jds.exceptions.LocationOutOfBoundsException;
-import lc.kra.jds.exceptions.PasswordRequiredException;
-import lc.kra.jds.exceptions.WireNotConnectable;
-import lc.kra.jds.exceptions.WiringException;
-import lc.kra.jds.gui.Application;
-import lc.kra.jds.gui.Application.SimulationFrame;
-import lc.kra.jds.gui.Guitilities;
-import lc.kra.jds.gui.Guitilities.Direction;
-import lc.kra.jds.gui.Guitilities.Rectangle;
-import lc.kra.jds.gui.Guitilities.RelativeMouseEvent;
+import static lc.kra.jds.Utilities.computeHash;
+import static lc.kra.jds.Utilities.getTranslation;
+import static lc.kra.jds.gui.Guitilities.addPoints;
+import static lc.kra.jds.gui.Guitilities.invertPoint;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.Scrollable;
-import javax.swing.SwingUtilities;
-import javax.swing.TransferHandler;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.text.NumberFormatter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -127,10 +82,56 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import static lc.kra.jds.Utilities.computeHash;
-import static lc.kra.jds.Utilities.getTranslation;
-import static lc.kra.jds.gui.Guitilities.addPoints;
-import static lc.kra.jds.gui.Guitilities.invertPoint;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.Scrollable;
+import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.text.NumberFormatter;
+
+import lc.kra.jds.Utilities.LegacyObjectInputStream;
+import lc.kra.jds.Utilities.RememberFileChooser;
+import lc.kra.jds.Utilities.TranslationType;
+import lc.kra.jds.components.Component;
+import lc.kra.jds.components.Component.ComponentFlavor;
+import lc.kra.jds.components.Configurable;
+import lc.kra.jds.components.Configurable.Option;
+import lc.kra.jds.components.Configurable.Option.OptionType;
+import lc.kra.jds.components.Interactable;
+import lc.kra.jds.components.Sociable;
+import lc.kra.jds.components.Wire;
+import lc.kra.jds.components.buildin.display.Voltmeter;
+import lc.kra.jds.components.buildin.external.ExternalSimulation;
+import lc.kra.jds.components.buildin.general.Junction;
+import lc.kra.jds.contacts.Contact;
+import lc.kra.jds.contacts.DragContact;
+import lc.kra.jds.contacts.InputContact;
+import lc.kra.jds.contacts.OutputContact;
+import lc.kra.jds.exceptions.LocationOutOfBoundsException;
+import lc.kra.jds.exceptions.PasswordRequiredException;
+import lc.kra.jds.exceptions.WireNotConnectable;
+import lc.kra.jds.exceptions.WiringException;
+import lc.kra.jds.gui.Application;
+import lc.kra.jds.gui.Application.SimulationFrame;
+import lc.kra.jds.gui.Guitilities;
+import lc.kra.jds.gui.Guitilities.Direction;
+import lc.kra.jds.gui.Guitilities.Rectangle;
+import lc.kra.jds.gui.Guitilities.RelativeMouseEvent;
 
 public class Simulation extends JComponent implements Scrollable, Printable {
 	private static final long serialVersionUID = 1l;
@@ -207,21 +208,21 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 	@Override protected void processMouseEvent(MouseEvent event) {
 		super.processMouseEvent(event);
 		switch(event.getID()) {
-			case MouseEvent.MOUSE_CLICKED:
-				if(event.getButton()!=MouseEvent.BUTTON1)
-					return;
-				Point point = applyZoom(event.getPoint());
-				Component component = searchComponentAt(point);
-				if(component==null) return;
-				else if(component instanceof Interactable) {
-					event = new RelativeMouseEvent(event, point, component.getLocation());
-					if(Utilities.isOdd(event.getClickCount()))
-						((Interactable) component).mouseClick(event);
-					else ((Interactable) component).mouseDoubleClick(event);
-				}
-				if(!isSimulating()&&event.getButton()==MouseEvent.BUTTON1&&
-						event.getClickCount()>=2)
-					showComponentConfigurationDialog(component);
+		case MouseEvent.MOUSE_CLICKED:
+			if(event.getButton()!=MouseEvent.BUTTON1)
+				return;
+			Point point = applyZoom(event.getPoint());
+			Component component = searchComponentAt(point);
+			if(component==null) return;
+			else if(component instanceof Interactable) {
+				event = new RelativeMouseEvent(event, point, component.getLocation());
+				if(Utilities.isOdd(event.getClickCount()))
+					((Interactable) component).mouseClick(event);
+				else ((Interactable) component).mouseDoubleClick(event);
+			}
+			if(!isSimulating()&&event.getButton()==MouseEvent.BUTTON1&&
+					event.getClickCount()>=2)
+				showComponentConfigurationDialog(component);
 		}
 	}
 
@@ -230,63 +231,63 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		this.addKeyListener(new KeyAdapter() {
 			@Override public void keyPressed(KeyEvent event) {
 				switch(event.getKeyCode()) {
-					case KeyEvent.VK_DELETE:
-						if(selectWire!=null) {
-							selectWire.removeWire();
-							selectWire = null;
-						} else removeComponents(selected);
-						for(FocusListener listener:getFocusListeners())
-							listener.focusLost(null);
-						repaint();
-						break;
-					case KeyEvent.VK_Z:
-						if(event.isControlDown())
-							undoChange();
-						break;
-					case KeyEvent.VK_Y:
-						if(event.isControlDown())
-							redoChange();
-						break;
-					case KeyEvent.VK_C:
-						if(event.isControlDown())
-							try {	copyToClipboard(); }
-							catch (CloneNotSupportedException e) {
-								e.printStackTrace();
-								JOptionPane.showMessageDialog(Simulation.this, getTranslation("clipboard.copy.error"), getTranslation("clipboard.copy.error", TranslationType.TITLE), JOptionPane.ERROR_MESSAGE);
-								setClipboard(null);
-							}
-						break;
-					case KeyEvent.VK_X:
-						if(event.isControlDown())
-							try {	cutIntoClipboard(); }
-							catch (CloneNotSupportedException e) {
-								e.printStackTrace();
-								JOptionPane.showMessageDialog(Simulation.this, getTranslation("clipboard.cut.error"), getTranslation("clipboard.cut.error", TranslationType.TITLE), JOptionPane.ERROR_MESSAGE);
-								setClipboard(null);
-							}
-						break;
-					case KeyEvent.VK_V:
-						if(event.isControlDown())
-							try {
-								if(clipboard==null)
-									return;
-								selected.clear();
-								Set<Component> clipboard = pasteFromClipboard();
-								if(clipboard!=null)
-									selected.addAll(clipboard);
-								if(isGridVisible())
-									for(Component component:clipboard)
-										snapComponentToGrid(component);
-								repaint();
-							} catch (CloneNotSupportedException e) {
-								JOptionPane.showMessageDialog(Simulation.this, getTranslation("clipboard.paste.error"), getTranslation("clipboard.paste.error", TranslationType.TITLE), JOptionPane.ERROR_MESSAGE);
-							}
-						break;
-					case KeyEvent.VK_A:
-						if(event.isControlDown()) {
-							setSelectedComponents(getAllComponents());
+				case KeyEvent.VK_DELETE:
+					if(selectWire!=null) {
+						selectWire.removeWire();
+						selectWire = null;
+					} else removeComponents(selected);
+					for(FocusListener listener:getFocusListeners())
+						listener.focusLost(null);
+					repaint();
+					break;
+				case KeyEvent.VK_Z:
+					if(event.isControlDown())
+						undoChange();
+					break;
+				case KeyEvent.VK_Y:
+					if(event.isControlDown())
+						redoChange();
+					break;
+				case KeyEvent.VK_C:
+					if(event.isControlDown())
+						try {	copyToClipboard(); }
+					catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(Simulation.this, getTranslation("clipboard.copy.error"), getTranslation("clipboard.copy.error", TranslationType.TITLE), JOptionPane.ERROR_MESSAGE);
+						setClipboard(null);
+					}
+					break;
+				case KeyEvent.VK_X:
+					if(event.isControlDown())
+						try {	cutIntoClipboard(); }
+					catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(Simulation.this, getTranslation("clipboard.cut.error"), getTranslation("clipboard.cut.error", TranslationType.TITLE), JOptionPane.ERROR_MESSAGE);
+						setClipboard(null);
+					}
+					break;
+				case KeyEvent.VK_V:
+					if(event.isControlDown())
+						try {
+							if(clipboard==null)
+								return;
+							selected.clear();
+							Set<Component> clipboard = pasteFromClipboard();
+							if(clipboard!=null)
+								selected.addAll(clipboard);
+							if(isGridVisible())
+								for(Component component:clipboard)
+									snapComponentToGrid(component);
 							repaint();
+						} catch (CloneNotSupportedException e) {
+							JOptionPane.showMessageDialog(Simulation.this, getTranslation("clipboard.paste.error"), getTranslation("clipboard.paste.error", TranslationType.TITLE), JOptionPane.ERROR_MESSAGE);
 						}
+					break;
+				case KeyEvent.VK_A:
+					if(event.isControlDown()) {
+						setSelectedComponents(getAllComponents());
+						repaint();
+					}
 				}
 			}
 		});
@@ -515,51 +516,51 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 			Object value = configuration.containsKey(option)?configuration.get(option):option.getDefault();
 			JComponent input = null;
 			switch(option.getType()) {
-				case NUMBER:
-					input = new JSpinner();
-					JFormattedTextField textField = ((JSpinner.NumberEditor)((JSpinner)input).getEditor()).getTextField();
-					((NumberFormatter)textField.getFormatter()).setAllowsInvalid(false);
-					((JSpinner)input).setValue(value);
-					break;
-				case TEXT:
-					input = new JTextField();
-					((JTextField)input).setText(value.toString());
-					break;
-				case BOOLEAN:
-					input = new JCheckBox();
-					((JCheckBox)input).setSelected((Boolean)value);
-					break;
-				case LIST:
-					input = new JComboBox<Object>((Object[])option.getDefault());
-					((JComboBox<?>)input).getModel().setSelectedItem(value.toString());
-					break;
-				case FILE:
-					final JTextField fileText = new JTextField() {
-						private static final long serialVersionUID = 1l;
-						@Override public void paint(Graphics graphics) {
-							super.paint(graphics);
-							if(getText().isEmpty()) {
-								graphics.setColor(Color.GRAY);
-								graphics.setFont(graphics.getFont().deriveFont(10f));
-								String explanation = getTranslation("component.simulation.file.choose");
-								graphics.drawString(explanation, 10, Guitilities.centerText(Direction.VERTICAL, graphics, getSize(), explanation));
-							}
+			case NUMBER:
+				input = new JSpinner();
+				JFormattedTextField textField = ((JSpinner.NumberEditor)((JSpinner)input).getEditor()).getTextField();
+				((NumberFormatter)textField.getFormatter()).setAllowsInvalid(false);
+				((JSpinner)input).setValue(value);
+				break;
+			case TEXT:
+				input = new JTextField();
+				((JTextField)input).setText(value.toString());
+				break;
+			case BOOLEAN:
+				input = new JCheckBox();
+				((JCheckBox)input).setSelected((Boolean)value);
+				break;
+			case LIST:
+				input = new JComboBox<Object>((Object[])option.getDefault());
+				((JComboBox<?>)input).getModel().setSelectedItem(value.toString());
+				break;
+			case FILE:
+				final JTextField fileText = new JTextField() {
+					private static final long serialVersionUID = 1l;
+					@Override public void paint(Graphics graphics) {
+						super.paint(graphics);
+						if(getText().isEmpty()) {
+							graphics.setColor(Color.GRAY);
+							graphics.setFont(graphics.getFont().deriveFont(10f));
+							String explanation = getTranslation("component.simulation.file.choose");
+							graphics.drawString(explanation, 10, Guitilities.centerText(Direction.VERTICAL, graphics, getSize(), explanation));
 						}
-					};
-					fileText.setEditable(false);
-					if(value!=null)
-						fileText.setText(value.toString());
-					fileText.addMouseListener(new MouseAdapter() {
-						@Override public void mouseClicked(MouseEvent event) {
-							JFileChooser chooser = new RememberFileChooser();
-							chooser.setFileFilter((FileFilter)option.getDefault());
-							if(chooser.showOpenDialog(dialog)!=JFileChooser.APPROVE_OPTION)
-								return;
-							fileText.setText(chooser.getSelectedFile().getPath());
-						}
-					});
-					input = fileText;
-					break;
+					}
+				};
+				fileText.setEditable(false);
+				if(value!=null)
+					fileText.setText(value.toString());
+				fileText.addMouseListener(new MouseAdapter() {
+					@Override public void mouseClicked(MouseEvent event) {
+						JFileChooser chooser = new RememberFileChooser();
+						chooser.setFileFilter((FileFilter)option.getDefault());
+						if(chooser.showOpenDialog(dialog)!=JFileChooser.APPROVE_OPTION)
+							return;
+						fileText.setText(chooser.getSelectedFile().getPath());
+					}
+				});
+				input = fileText;
+				break;
 			}
 			inputs.put(option, input);
 
@@ -568,8 +569,8 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 				if(!option.getType().equals(OptionType.FILE)) {
 					String variable = null;
 					switch(option.getType()) {
-						case LIST: variable = ((Object[])option.getDefault())[0].toString(); break;
-						default:   variable = option.getDefault().toString(); }
+					case LIST: variable = ((Object[])option.getDefault())[0].toString(); break;
+					default:   variable = option.getDefault().toString(); }
 					caption = getTranslation("component.configuration.default", getTranslation(variable, TranslationType.EXTERNAL));
 				} else caption = ((FileFilter)option.getDefault()).getDescription();
 			Guitilities.addGridPairLine(centerPane, grid++, new JLabel(getTranslation(option.getLabel(), TranslationType.EXTERNAL)+":"), input, caption!=null?new JLabel(caption):null);
@@ -584,11 +585,11 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 					for(Option option:inputs.keySet()) {
 						JComponent component = inputs.get(option); Object value = null;
 						switch(option.getType()) {
-							case NUMBER: value = Integer.parseInt(((JSpinner)component).getValue().toString()); break;
-							case TEXT:   value = ((JTextField)component).getText(); break;
-							case BOOLEAN:value = ((JCheckBox)component).isSelected(); break;
-							case LIST:   value = ((JComboBox<?>)component).getSelectedItem().toString(); break;
-							case FILE:   value = new File(((JTextField)component).getText()); break; }
+						case NUMBER: value = Integer.parseInt(((JSpinner)component).getValue().toString()); break;
+						case TEXT:   value = ((JTextField)component).getText(); break;
+						case BOOLEAN:value = ((JCheckBox)component).isSelected(); break;
+						case LIST:   value = ((JComboBox<?>)component).getSelectedItem().toString(); break;
+						case FILE:   value = new File(((JTextField)component).getText()); break; }
 						configuration.put(option, value);
 					}
 					configurable.setConfiguration(configuration);
@@ -718,17 +719,17 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		return graphics;
 	}
 	private void paintGrid(Graphics graphics, Dimension size) {
-		if(gridBuffer==null || gridBuffer.getHeight()!=size.getHeight() || gridBuffer.getWidth()!=size.getWidth()){
-			gridBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
-			Graphics gridImage=gridBuffer.getGraphics();
-			gridImage.setColor(Color.LIGHT_GRAY);
-			for(int x=0;x<size.width+GRID_STEPS;x+=GRID_STEPS)
-				for(int y=0;y<size.height+GRID_STEPS;y+=GRID_STEPS) {
-					gridImage.drawLine(x-3, y, x+3, y);
-					gridImage.drawLine(x, y-3, x, y+3);
-				}
-		}
-		graphics.drawImage(gridBuffer,0,0,null);
+        if(gridBuffer==null || gridBuffer.getHeight()!=size.getHeight() || gridBuffer.getWidth()!=size.getWidth()){
+            gridBuffer = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics gridImage=gridBuffer.getGraphics();
+            gridImage.setColor(Color.LIGHT_GRAY);
+            for(int x=0;x<size.width+GRID_STEPS;x+=GRID_STEPS)
+                for(int y=0;y<size.height+GRID_STEPS;y+=GRID_STEPS) {
+                    gridImage.drawLine(x-3, y, x+3, y);
+                    gridImage.drawLine(x, y-3, x, y+3);
+                }
+        }
+        graphics.drawImage(gridBuffer,0,0,null);
 	}
 	@SuppressWarnings("unused") private void paintComponents(Graphics graphics, Collection<Component> components) { paintComponents(graphics, components, null); }
 	private void paintComponents(Graphics graphics, Collection<Component> components, Collection<?> ignore) {
@@ -802,7 +803,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		for(StackTraceElement element:Thread.currentThread().getStackTrace())
 			if(element.getClassName().equals(Simulation.class.getName())
 					&&(element.getMethodName().equals("undoChange")
-					||element.getMethodName().equals("redoChange")))
+							||element.getMethodName().equals("redoChange")))
 				return true;
 		return false;
 	}
@@ -838,8 +839,8 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 	public void setComponentLayers(Collection<? extends Component> components, Layer layer) {
 		data.components.removeAll(components);
 		switch(layer) {
-			case TOPMOST:	data.components.addAll(components);   break;
-			case BOTTOMMOST: data.components.addAll(0, components); break; }
+		case TOPMOST:    data.components.addAll(components);   break;
+		case BOTTOMMOST: data.components.addAll(0, components); break; }
 		repaint();
 	}
 
@@ -921,7 +922,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		if(source!=null)
 			for(Contact target:targets)
 				try { new Wire(source, target); }
-				catch(WireNotConnectable e) { }
+		catch(WireNotConnectable e) { }
 		return removed;
 	}
 	public void removeComponents(Collection<? extends Component> components) {
@@ -941,11 +942,11 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		repaint();
 	}
 	protected void innerMoveComponent(Component component, Point from, Point to) {;
-		Point relative = new Point(to.x-from.x, to.y-from.y);
-		try { component.moveRelative(relative);	}
-		catch(LocationOutOfBoundsException e) {
-			//this exception can be ignored the component is not moved either way
-		}
+	Point relative = new Point(to.x-from.x, to.y-from.y);
+	try { component.moveRelative(relative);	}
+	catch(LocationOutOfBoundsException e) {
+		//this exception can be ignored the component is not moved either way
+	}
 	}
 	public void moveComponents(Collection<? extends Component> components, Point from, Point to) {
 		innerMoveComponents(components, from, to);
@@ -958,12 +959,12 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 	protected void innerMoveComponents(Collection<? extends Component> components, Point relative) {
 		for(Component component:components)
 			try { component.moveRelative(relative);	}
-			catch(LocationOutOfBoundsException e) {
-				Point location = component.getLocation(), point = new Point(relative);
-				if(location.x+relative.x<0) point.x = -location.x;
-				if(location.y+relative.y<0) point.y = -location.y;
-				component.moveRelative(point);
-			}
+		catch(LocationOutOfBoundsException e) {
+			Point location = component.getLocation(), point = new Point(relative);
+			if(location.x+relative.x<0) point.x = -location.x;
+			if(location.y+relative.y<0) point.y = -location.y;
+			component.moveRelative(point);
+		}
 	}
 
 	public Contact searchContactAt(Point point) { return searchContactAt(point, Contact.class); }

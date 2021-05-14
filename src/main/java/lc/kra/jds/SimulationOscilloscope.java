@@ -117,7 +117,7 @@ public class SimulationOscilloscope extends JPanel implements Printable {
 		graphics.setComposite(AlphaComposite.Src);
 		int width = getPreferredSize().width, left = 0;
 		switch(direction) {
-		case LEFT_TO_RIGHT:	graphics.copyArea(0, 0, width-1, HEIGHT+1, 1, 0); left = 0;		 break;
+		case LEFT_TO_RIGHT:	graphics.copyArea(0, 0, width-1, HEIGHT+1, 1, 0); left = 0;         break;
 		case RIGHT_TO_LEFT: graphics.copyArea(1, 0, width-1, HEIGHT+1, -1, 0); left = width - 1;	break; }
 		graphics.setColor(Guitilities.TRANSPARENT); graphics.drawLine(left, 0, left, HEIGHT);
 		graphics.setColor(foreground);

@@ -17,15 +17,7 @@
  */
 package lc.kra.jds.components;
 
-import lc.kra.jds.Locatable;
-import lc.kra.jds.Moveable;
-import lc.kra.jds.Paintable;
-import lc.kra.jds.Utilities;
-import lc.kra.jds.contacts.Contact;
-import lc.kra.jds.contacts.InputContact;
-import lc.kra.jds.contacts.OutputContact;
-import lc.kra.jds.exceptions.LocationOutOfBoundsException;
-import lc.kra.jds.exceptions.WireNotConnectable;
+import static lc.kra.jds.Utilities.*;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -48,7 +40,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import static lc.kra.jds.Utilities.getField;
+import lc.kra.jds.Locatable;
+import lc.kra.jds.Moveable;
+import lc.kra.jds.Paintable;
+import lc.kra.jds.Utilities;
+import lc.kra.jds.contacts.Contact;
+import lc.kra.jds.contacts.InputContact;
+import lc.kra.jds.contacts.OutputContact;
+import lc.kra.jds.exceptions.LocationOutOfBoundsException;
+import lc.kra.jds.exceptions.WireNotConnectable;
 
 public abstract class Component implements Paintable, Locatable, Moveable, Cloneable, Serializable {
 	private static final long serialVersionUID = 1l;
