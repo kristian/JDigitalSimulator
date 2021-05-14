@@ -17,20 +17,21 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import java.awt.Graphics;
-import java.awt.Point;
-import java.beans.PropertyVetoException;
-import java.util.HashMap;
-import java.util.Map;
-
 import lc.kra.jds.Utilities;
 import lc.kra.jds.components.Configurable;
 import lc.kra.jds.components.Configurable.Option.OptionType;
+import lc.kra.jds.components.Wire;
 import lc.kra.jds.contacts.Contact;
 import lc.kra.jds.contacts.ContactList;
 import lc.kra.jds.contacts.ContactUtilities;
 import lc.kra.jds.contacts.InputContact;
 import lc.kra.jds.contacts.OutputContact;
+
+import java.awt.Graphics;
+import java.awt.Point;
+import java.beans.PropertyVetoException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract-Gate (build-in component)

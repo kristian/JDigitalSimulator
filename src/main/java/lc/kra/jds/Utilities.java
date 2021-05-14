@@ -17,6 +17,11 @@
  */
 package lc.kra.jds;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+import javax.swing.JFileChooser;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -45,12 +50,6 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
-import javax.swing.JFileChooser;
-
 public final class Utilities {
 	public static enum TranslationType { TEXT, ALTERNATIVE, TITLE, EXTERNAL, TOOLTIP, DESCRIPTION; }
 
@@ -67,8 +66,10 @@ public final class Utilities {
 	private static Locale currentLocale = Locale.getDefault();
 	private static ResourceBundle translationBundle;
 	private static SimpleClassLoader simpleClassLoader;
-	
+
 	private static Properties configuration = new Properties();
+
+	private static boolean useAnsiSymbols = true;
 
 	public static Object copy(Object object) throws CloneNotSupportedException { //deep clone using serilization
 		Object copy = null;
@@ -428,7 +429,7 @@ public final class Utilities {
 			return cls;
 		}
 	}
-	
+
 	public static class AlternateClassLoaderObjectInputStream extends ObjectInputStream {
 		protected final ClassLoader alternateClassLoader;
 		public AlternateClassLoaderObjectInputStream(InputStream in, ClassLoader alternateClassLoader) throws IOException {
@@ -453,7 +454,7 @@ public final class Utilities {
 			return name.replaceFirst("^(\\[L)?"+Pattern.quote(LEGACY_PACKAGE_PREFIX), "$1"+Matcher.quoteReplacement(PACKAGE_PREFIX));
 		}
 	}
-	
+
 	public static URL getLocalPath() {
 		URL path = Utilities.class.getProtectionDomain().getCodeSource().getLocation();
 		try { return new URL(URLDecoder.decode(path.toString(), "UTF-8")); }

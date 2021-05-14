@@ -17,13 +17,14 @@
  */
 package lc.kra.jds.components.buildin.gate;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
+import lc.kra.jds.Utilities;
 import lc.kra.jds.components.Component;
 import lc.kra.jds.components.Sociable;
 import lc.kra.jds.contacts.Contact;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 
 /**
  * Gate (build-in component)
@@ -35,7 +36,7 @@ public abstract class Gate extends Component implements Sociable {
 	protected Dimension size;
 	protected boolean currentlyUsesAnsiSymbols;
 
-	public Gate() { recalcSize() }
+	public Gate() { recalcSize(); }
 
 	protected void recalcSize() {
 		if (currentlyUsesAnsiSymbols) {
@@ -57,7 +58,7 @@ public abstract class Gate extends Component implements Sociable {
 	}
 
 	@Override public void paint(Graphics graphics) {
-		checkSymbols()
+		checkSymbols();
 		graphics.setColor(Color.BLACK);
 		graphics.drawRect(5, 0, size.width-15, size.height);
 	}
