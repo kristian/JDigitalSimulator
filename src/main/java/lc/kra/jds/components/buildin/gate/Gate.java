@@ -60,7 +60,9 @@ public abstract class Gate extends Component implements Sociable {
 	@Override public void paint(Graphics graphics) {
 		checkSymbols();
 		graphics.setColor(Color.BLACK);
-		graphics.drawRect(5, 0, size.width-15, size.height);
+		if (!currentlyUsesAnsiSymbols) {
+			graphics.drawRect(5, 0, size.width-15, size.height);
+		}
 	}
 	protected void paintLabel(Graphics graphics, String label) { graphics.drawString(label, 5+(size.width-15)/2-graphics.getFontMetrics().stringWidth(label)/2, 15); }
 	protected void paintNot(Graphics graphics) { graphics.drawOval(size.width-10, size.height/2-3, 6, 6); }
