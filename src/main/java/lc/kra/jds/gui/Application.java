@@ -695,6 +695,15 @@ public class Application extends JFrame {
 				}
 			}
 		}));
+        display.add(new JSeparator());
+        display.add(createMenuItem("window.symbols", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setUseAnsiSymbols(!useAnsiSymbols());
+                revalidate();
+                repaint();
+            }
+        }));
 		menubar.add(display);
 
 		JMenu window = new JMenu(getTranslation("menubar.window"));
