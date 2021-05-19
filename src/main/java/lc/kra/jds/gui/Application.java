@@ -586,6 +586,16 @@ public class Application extends JFrame {
 				lookAndFeel.setSelectedItem(UIManager.getLookAndFeel().getName());
 				centerPane.add(lookAndFeelPane);
 
+				centerPane.add(javax.swing.Box.createVerticalStrut(20));
+
+				centerPane.add(Guitilities.createSeparator(getTranslation("properties.symbols")));
+				javax.swing.JPanel symbolsPane = new javax.swing.JPanel(new java.awt.GridBagLayout());
+				final javax.swing.JComboBox<String> symbols = Guitilities.addGridPairLine(symbolsPane, 0, new javax.swing.JLabel(getTranslation("properties.symbols.name")), new javax.swing.JComboBox<String>());
+				symbols.addItem("ANSI/IEEE Std 91/91a-1991");
+				symbols.addItem("IEC 60617-12 : 1997");
+				symbols.setSelectedIndex(useAnsiSymbols() ? 0 : 1);
+				centerPane.add(symbolsPane);
+
 				JPanel bottomPane = Guitilities.createGradientFooter();
 				final ActionListener cancelListener = new ActionListener() {
 					@Override public void actionPerformed(ActionEvent event) { dialog.dispose(); }
@@ -607,6 +617,24 @@ public class Application extends JFrame {
 								SwingUtilities.updateComponentTreeUI(dialog);
 								SwingUtilities.updateComponentTreeUI(Application.this);
 							}
+						switch (symbols.getSelectedIndex()) {
+							case 0:
+								if (!useAnsiSymbols()) {
+									javax.swing.JOptionPane.showMessageDialog(dialog, getTranslation("properties.symbols.info"));
+									setUseAnsiSymbols(true);
+									lc.kra.jds.Utilities.setConfiguration(CONFIGURATION_ANSI_SYMBOLS, "true");
+								}
+								break;
+							case 1:
+								if (useAnsiSymbols()) {
+									javax.swing.JOptionPane.showMessageDialog(dialog, getTranslation("properties.symbols.info"));
+									setUseAnsiSymbols(false);
+									lc.kra.jds.Utilities.setConfiguration(CONFIGURATION_ANSI_SYMBOLS, "false");
+									break;
+								}
+						}
+						revalidate();
+						repaint();
 					}
 				};
 				bottomPane.add(Guitilities.createButton(getTranslation("properties.okay"), new ActionListener() {
@@ -667,6 +695,15 @@ public class Application extends JFrame {
 				}
 			}
 		}));
+        display.add(new JSeparator());
+        display.add(createMenuItem("window.symbols", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setUseAnsiSymbols(!useAnsiSymbols());
+                revalidate();
+                repaint();
+            }
+        }));
 		menubar.add(display);
 
 		JMenu window = new JMenu(getTranslation("menubar.window"));
@@ -1319,6 +1356,14 @@ public class Application extends JFrame {
 			for(Locale locale:Utilities.SUPPORTED_LOCALES)
 				if(locale.getLanguage().equals(localizationLanguage))
 					Utilities.setCurrentLocale(locale);
+		String configBetterSymbols = lc.kra.jds.Utilities.getConfiguration(CONFIGURATION_ANSI_SYMBOLS);
+		if (configBetterSymbols != null) {
+			if (configBetterSymbols.equals("true")) {
+				setUseAnsiSymbols(true);
+			} else if (configBetterSymbols.equals("false")) {
+				setUseAnsiSymbols(false);
+			}
+		}
 		Application application = new Application();
 		if(args.length!=0)
 			try { application.openWorksheet(new File(args[0])); }
