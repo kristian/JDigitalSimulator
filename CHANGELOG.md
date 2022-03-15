@@ -1,4 +1,8 @@
-## 2.0.3 (20120-03-04)
+## 2.1.0 (2022-01-25)
+### Fixed
+  - Bumped launch4j to version 2.1.0
+
+## 2.0.3 (2020-03-04)
 ### Fixed
   - Fixed the (very buggy) 74181 ALU, thanks to Frank Möbius
 
