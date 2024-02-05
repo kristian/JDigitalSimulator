@@ -137,9 +137,9 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 	private static final long serialVersionUID = 1l;
 
 	public enum Layer { TOPMOST, BOTTOMMOST; }
+	public static final Dimension DEFAULT_SIZE = new Dimension(2000, 2000);
 
 	private static final Color SELECTION = new Color(10, 200, 10, 75);
-	private static final Dimension SIZE = new Dimension(2000, 2000);
 	private static final int GRID_STEPS = 20;
 	private static final int STACK_SIZE = 200;
 
@@ -196,7 +196,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 		future = new LinkedList<ChangeEvent>();
 		this.setZoom(1.0d);
 		this.setFocusable(true);
-		this.setPreferredSize(SIZE);
+		this.setPreferredSize(properties.size != null ? properties.size : DEFAULT_SIZE);
 		initializeListeners();
 		initializeDropTarget();
 	}
@@ -466,10 +466,11 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 									}
 
 					GraphicsConfiguration context = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-					dragImage = context.createCompatibleImage(SIZE.height, SIZE.width, Transparency.TRANSLUCENT);
+					Dimension size = getPreferredSize();
+					dragImage = context.createCompatibleImage(size.height, size.width, Transparency.TRANSLUCENT);
 					Graphics2D graphics = prepareGraphics(dragImage.createGraphics());
 					graphics.setColor(new Color(0, 0, 0, 0));
-					graphics.fillRect(0, 0, SIZE.height, SIZE.width);
+					graphics.fillRect(0, 0, size.height, size.width);
 					paintComponents(graphics, dragComponents, dragWires);
 				} else if(selectWire!=null) {
 					selectWire.setPreferredLocation(event.getPoint());
@@ -1205,6 +1206,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 
 		public AuthorDescription author = new AuthorDescription();
 		public CircuitDescription circuit = new CircuitDescription();
+		public Dimension size = DEFAULT_SIZE;
 		private String hash;
 
 		public class AuthorDescription implements Serializable {

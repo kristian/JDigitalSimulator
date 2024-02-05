@@ -105,6 +105,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -113,6 +114,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JViewport;
 import javax.swing.JWindow;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.UIManager;
@@ -140,7 +142,7 @@ import lc.kra.jds.exceptions.PasswordRequiredException;
 /**
  * JDigitalSimulator
  * @author Kristian Kraljic
- * @version 2.3.0
+ * @version 2.4.0
  */
 public class Application extends JFrame {
 	private static final long serialVersionUID = -4693271310855486553L;
@@ -148,7 +150,7 @@ public class Application extends JFrame {
 	public static final String FILE_EXTENSION = "jdsim";
 	public static File pluginDirectory, currentDirectory;
 
-	private static final String VERSION = "2.3.0", COPYRIGHT = "2010-2024", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
+	private static final String VERSION = "2.4.0", COPYRIGHT = "2010-2024", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
 
 	private static final String[]
 		TOOLBAR_FRAME_FOCUS = new String[]{"save", "print", "print_level", "simulate", "left", "right", "up", "down", "grid", "secure", "zoom_default", "zoom", "zoom_in", "zoom_out"},
@@ -502,8 +504,8 @@ public class Application extends JFrame {
 		properties.add(createMenuItem("properties.worksheet", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				SimulationFrame frame = desktop.getSelectedFrame();
-				Simulation simulation = frame.getSimulation();
+				final SimulationFrame frame = desktop.getSelectedFrame();
+				final Simulation simulation = frame.getSimulation();
 				final Simulation.SimulationProperies properties = simulation.properties;
 				String fileName = getTranslation("properties.worksheet", TranslationType.TITLE, frame.getFileName());
 				final JDialog dialog = Guitilities.createDialog(Application.this, fileName);
@@ -527,6 +529,12 @@ public class Application extends JFrame {
 				final JTextField      circuitVersion = Guitilities.addGridPairLine(circuitPane, 2, new JLabel(getTranslation("properties.circuit.version")), new JTextField(properties.circuit.version));
 				centerPane.add(circuitPane);
 
+				centerPane.add(Guitilities.createSeparator(getTranslation("properties.worksheet")));
+				JPanel worksheetPane = new JPanel(new GridBagLayout());
+				final JSpinner  worksheetWidth = Guitilities.addGridPairLine(worksheetPane, 0, new JLabel(getTranslation("properties.worksheet.width")), new JSpinner(new SpinnerNumberModel((properties.size != null ? properties.size : Simulation.DEFAULT_SIZE).getWidth(), 100, Short.MAX_VALUE, 100)), new JLabel(getTranslation("properties.worksheet.pixels")));
+				final JSpinner worksheetHeight = Guitilities.addGridPairLine(worksheetPane, 1, new JLabel(getTranslation("properties.worksheet.height")), new JSpinner(new SpinnerNumberModel((properties.size != null ? properties.size : Simulation.DEFAULT_SIZE).getHeight(), 100, Short.MAX_VALUE, 100)), new JLabel(getTranslation("properties.worksheet.pixels")));
+				centerPane.add(worksheetPane);
+
 				JPanel bottomPane = Guitilities.createGradientFooter();
 				bottomPane.add(Guitilities.createButton(getTranslation("properties.secure"), new ActionListener() {
 					@Override public void actionPerformed(ActionEvent event) { getToolBarButton("secure").getActionListeners()[0].actionPerformed(event); }
@@ -541,6 +549,8 @@ public class Application extends JFrame {
 						properties.circuit.name = circuitName.getText();
 						properties.circuit.description = ((JTextArea)circuitDescription.getViewport().getComponent(0)).getText();
 						properties.circuit.version = circuitVersion.getText();
+						properties.size.setSize((double) worksheetWidth.getValue(), (double) worksheetHeight.getValue());
+						simulation.setPreferredSize(properties.size); if (simulation.getParent() != null) simulation.getParent().revalidate();
 					}
 				};
 				bottomPane.add(Guitilities.createButton(getTranslation("properties.okay"), new ActionListener() {
