@@ -444,11 +444,28 @@ public final class Utilities {
 	public static class LegacyObjectInputStream extends AlternateClassLoaderObjectInputStream {
 		public static final String LEGACY_PACKAGE_PREFIX = "de.ksquared.", PACKAGE_PREFIX = "lc.kra.";
 		public LegacyObjectInputStream(InputStream in) throws IOException {
-			super(in, getSimpleClassLoader()); }
+			super(in, getSimpleClassLoader());
+		}
 		@Override protected ObjectStreamClass readClassDescriptor() throws IOException, ClassNotFoundException {
 			ObjectStreamClass descriptor = super.readClassDescriptor(); String name = descriptor.getName();
-			if(name.contains(LEGACY_PACKAGE_PREFIX)) descriptor = ObjectStreamClass.lookup(Class.forName(replaceLegacyPackage(name), false, alternateClassLoader));
+			if(name.contains(LEGACY_PACKAGE_PREFIX)) {
+				String newName = replaceLegacyPackage(name);
+				try {
+					// Do not return a new ObjectStreamClass looked up from new class definitions, but modify the descriptor read from the stream.
+					// Otherwise some flags could be wrong, like the flag "hasWriteObjectData" when reading objects from 7.6/7.7.
+					Field nameField = ObjectStreamClass.class.getDeclaredField("name");
+					nameField.setAccessible(true);
+					nameField.set(descriptor, newName);
+				} catch (IllegalAccessException | NoSuchFieldException e) {
+					throw new RuntimeException(e);
+				}
+			}
 			return descriptor;
+		}
+		@Override
+		protected Object resolveObject(Object obj) throws IOException {
+			// TODO Auto-generated method stub
+			return super.resolveObject(obj);
 		}
 		public static String replaceLegacyPackage(String name) {
 			return name.replaceFirst("^(\\[L)?"+Pattern.quote(LEGACY_PACKAGE_PREFIX), "$1"+Matcher.quoteReplacement(PACKAGE_PREFIX));

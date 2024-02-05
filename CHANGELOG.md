@@ -1,3 +1,7 @@
+## 2.3.0 (2024-02-05)
+### Fixed
+  - Ability to open files from old JDigitalSimulator versions (before open-sourcing, version < 1.*), see the README.md instructions
+
 ## 2.2.0 (2022-06-18)
 ### Added
   - US / ANSI style gate symbols and option to switch in the menu, thanks to Sett17
