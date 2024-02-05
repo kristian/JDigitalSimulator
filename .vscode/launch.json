@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Application",
+            "request": "launch",
+            "mainClass": "lc.kra.jds.gui.Application",
+            "projectName": "jds",
+            "vmArgs": "--add-opens java.base/java.io=ALL-UNNAMED"
+        }
+    ]
+}

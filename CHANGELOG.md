@@ -1,3 +1,7 @@
+## 2.4.0 (2024-02-05)
+### Added
+  - Option to change worksheet size
+
 ## 2.3.0 (2024-02-05)
 ### Fixed
   - Ability to open files from old JDigitalSimulator versions (before open-sourcing, version < 1.*), see the README.md instructions
