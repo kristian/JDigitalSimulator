@@ -1184,6 +1184,7 @@ public class Simulation extends JComponent implements Scrollable, Printable {
 				objectData = objectIn.readObject();
 			} finally { objectIn.close(); }
 		} catch(StreamCorruptedException e) { //cypher required or corrupted input
+			e.printStackTrace();
 			if(password==null||password.isEmpty())
 				throw new PasswordRequiredException();
 			ObjectInputStream objectIn = new LegacyObjectInputStream(new CipherInputStream(in, Utilities.createCipher(Utilities.computeHash(password), Cipher.DECRYPT_MODE)));

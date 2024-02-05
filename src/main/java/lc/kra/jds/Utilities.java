@@ -444,10 +444,21 @@ public final class Utilities {
 	public static class LegacyObjectInputStream extends AlternateClassLoaderObjectInputStream {
 		public static final String LEGACY_PACKAGE_PREFIX = "de.ksquared.", PACKAGE_PREFIX = "lc.kra.";
 		public LegacyObjectInputStream(InputStream in) throws IOException {
-			super(in, getSimpleClassLoader()); }
+			super(in, getSimpleClassLoader());
+		}
 		@Override protected ObjectStreamClass readClassDescriptor() throws IOException, ClassNotFoundException {
 			ObjectStreamClass descriptor = super.readClassDescriptor(); String name = descriptor.getName();
-			if(name.contains(LEGACY_PACKAGE_PREFIX)) descriptor = ObjectStreamClass.lookup(Class.forName(replaceLegacyPackage(name), false, alternateClassLoader));
+			if(name.contains(LEGACY_PACKAGE_PREFIX)) {
+				String newName = replaceLegacyPackage(name);
+				try {
+					// do not return a new ObjectStreamClass looked up from new class definitions, but modify the descriptor read from the stream, otherwise some flags could be wrong, like the flag "hasWriteObjectData" resulting in an exception when trying to read the object
+					Field nameField = ObjectStreamClass.class.getDeclaredField("name");
+					nameField.setAccessible(true);
+					nameField.set(descriptor, newName);
+				} catch (IllegalAccessException | NoSuchFieldException e) {
+					throw new RuntimeException(e);
+				}
+			}
 			return descriptor;
 		}
 		public static String replaceLegacyPackage(String name) {
