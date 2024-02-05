@@ -1,7 +1,7 @@
 JDigitalSimulator: A platform independent Electronic Design Automation software
 ===============================================================================
 
-[![Build Status](https://travis-ci.org/kristian/JDigitalSimulator.svg?branch=master)](https://travis-ci.org/kristian/JDigitalSimulator)
+[![Build Status](https://github.com/kristian/JDigitalSimulator/actions/workflows/maven.yml/badge.svg)](https://github.com/kristian/JDigitalSimulator/actions/workflows/maven.yml)
 
 JDigitalSimulator is a platform independent open source Electronic Design Automation software entirely written in Java.
 
