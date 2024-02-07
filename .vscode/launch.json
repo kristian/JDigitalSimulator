@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "lc.kra.jds.gui.Application",
             "projectName": "jds",
-            "vmArgs": "--add-opens java.base/java.io=ALL-UNNAMED"
+            "vmArgs": "--add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/jdk.internal.loader=ALL-UNNAMED"
         }
     ]
 }

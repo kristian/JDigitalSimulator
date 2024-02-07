@@ -142,7 +142,7 @@ import lc.kra.jds.exceptions.PasswordRequiredException;
 /**
  * JDigitalSimulator
  * @author Kristian Kraljic
- * @version 2.4.0
+ * @version 2.5.0
  */
 public class Application extends JFrame {
 	private static final long serialVersionUID = -4693271310855486553L;
@@ -150,7 +150,7 @@ public class Application extends JFrame {
 	public static final String FILE_EXTENSION = "jdsim";
 	public static File pluginDirectory, currentDirectory;
 
-	private static final String VERSION = "2.4.0", COPYRIGHT = "2010-2024", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
+	private static final String VERSION = "2.5.0", COPYRIGHT = "2010-2024", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
 
 	private static final String[]
 		TOOLBAR_FRAME_FOCUS = new String[]{"save", "print", "print_level", "simulate", "left", "right", "up", "down", "grid", "secure", "zoom_default", "zoom", "zoom_in", "zoom_out"},
@@ -232,8 +232,10 @@ public class Application extends JFrame {
 			@Override
 			public boolean accept(File dir, String name) { return name.equalsIgnoreCase("plugins"); }
 		});
-		if(files!=null&&files.length>=1)
+		if(files!=null&&files.length>=1) {
+			Utilities.initLegacyClassLoader(files[0]);
 			loadComponents(files[0], null);
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -250,14 +252,20 @@ public class Application extends JFrame {
 		if(likelyFile.isDirectory())
 			for(File file:likelyFile.listFiles())
 				if(file.isDirectory())
-					loadComponents(file, checkPackage, currentPackage!=null&&!currentPackage.isEmpty()?currentPackage+'.'+file.getName():file.getName());
+					 loadComponents(file, checkPackage, currentPackage!=null&&!currentPackage.isEmpty()?currentPackage+'.'+file.getName():file.getName());
 				else loadComponents(file, checkPackage, currentPackage);
+		else if(likelyFile.getName().matches("asm.*\\.jar")) {}
 		else try { loadComponents(new JarFile(likelyFile), checkPackage); }
 		catch(Throwable t) {
 			try { loadComponent(likelyFile.getName(), checkPackage, currentPackage); }
 			catch(Throwable t_a) {
 				try { loadComponent(Utilities.getSimpleClassLoader().loadClass(likelyFile)); }
-				catch(Throwable t_b) {	} //that was our last trick... nothing to do here anymore
+				catch(Throwable t_b) {
+					if (Utilities.hasLegacyClassLoader()) {
+						try { loadComponent(Utilities.getLegacyClassLoader().loadClass(likelyFile)); }
+						catch(Throwable t_c) { t_c.printStackTrace(); } //that was our last trick... nothing to do here anymore
+					}
+				}
 			}
 		}
 	}
@@ -268,7 +276,12 @@ public class Application extends JFrame {
 			try { loadComponent(entry.getName(), checkPackage); }
 			catch (Throwable t) {
 				try { loadComponent(Utilities.getSimpleClassLoader().loadClass(file, entry)); }
-				catch(Throwable t_a) { } //that was our last trick... nothing to do here anymore
+				catch(Throwable t_a) {
+					if (Utilities.hasLegacyClassLoader()) {
+						try { loadComponent(Utilities.getLegacyClassLoader().loadClass(file, entry)); }
+						catch(Throwable t_b) { t_b.printStackTrace(); } //that was our last trick... nothing to do here anymore
+					}
+				}
 			}
 		}
 	}

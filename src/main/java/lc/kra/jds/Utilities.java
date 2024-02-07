@@ -24,6 +24,8 @@ import javax.crypto.spec.DESKeySpec;
 import javax.swing.JFileChooser;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,12 +38,15 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -49,6 +54,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
 
 public final class Utilities {
 	public static enum TranslationType { TEXT, ALTERNATIVE, TITLE, EXTERNAL, TOOLTIP, DESCRIPTION; }
@@ -65,7 +74,7 @@ public final class Utilities {
 
 	private static Locale currentLocale = Locale.getDefault();
 	private static ResourceBundle translationBundle;
-	private static SimpleClassLoader simpleClassLoader;
+	private static SimpleClassLoader simpleClassLoader, legacyClassLoader;
 
 	private static Properties configuration = new Properties();
 
@@ -73,12 +82,12 @@ public final class Utilities {
 
 	public static Object copy(Object object) throws CloneNotSupportedException { //deep clone using serilization
 		Object copy = null;
-		FastByteArrayOutputStream byteOutput = new FastByteArrayOutputStream();
+		ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
 		try {
 			ObjectOutputStream objectOutput = new ObjectOutputStream(byteOutput);
 			try { objectOutput.writeObject(object); }
 			finally { objectOutput.close(); }
-			ObjectInputStream objectInput = new AlternateClassLoaderObjectInputStream(byteOutput.getInputStream(), Utilities.getSimpleClassLoader());
+			ObjectInputStream objectInput = new AlternateClassLoaderObjectInputStream(new ByteArrayInputStream(byteOutput.toByteArray()), Utilities.getSimpleClassLoader());
 			try { copy = objectInput.readObject(); }
 			finally { objectInput.close(); }
 		} catch(Exception e) { e.printStackTrace(); throw new CloneNotSupportedException(); }
@@ -159,150 +168,6 @@ public final class Utilities {
 				return dfault;
 			return (Type) value;
 		} catch(Exception e) { return dfault; }
-	}
-
-	protected static class ByteArrayInputStream extends InputStream {
-		protected byte[] buffer = null;
-		protected int count = 0, position = 0;
-		public ByteArrayInputStream(byte[] buffer, int count) {
-			this.buffer = buffer;
-			this.count = count;
-		}
-		@Override public final int available() { return count - position; }
-		@Override public final int read() { return (position < count) ? (buffer[position++] & 0xff) : -1; }
-		@Override public final int read(byte[] bytes, int offset, int length) {
-			if(position>=count)
-				return -1;
-			if((position+length)>count)
-				length = count - position;
-			System.arraycopy(buffer, position, bytes, offset, length);
-			position += length;
-			return length;
-		}
-		@Override public final long skip(long skip) {
-			if((position+skip)>count)
-				skip = count - position;
-			if(skip<0)
-				return 0;
-			position += skip;
-			return skip;
-		}
-	}
-	protected static class ByteArrayOutputStream extends OutputStream {
-		protected byte[] buffer = null;
-		protected int size = 0;
-		public ByteArrayOutputStream() { this(5 * 1024); }
-		public ByteArrayOutputStream(int size) {
-			this.size = 0;
-			this.buffer = new byte[size];
-		}
-		public InputStream getInputStream() {
-			try {
-				this.flush(); this.close();
-				return new ByteArrayInputStream(buffer, size);
-			} catch (IOException e) { }
-			return null;
-		}
-		private void verifyBufferSize(int size) {
-			if(size<=buffer.length)
-				return;
-			byte[] buffer = this.buffer;
-			this.buffer = new byte[Math.max(size, 2*this.buffer.length)];
-			System.arraycopy(buffer, 0, this.buffer, 0, buffer.length);
-			buffer = null;
-		}
-		@Override public final void write(byte bytes[]) {
-			verifyBufferSize(size+bytes.length);
-			System.arraycopy(bytes, 0, this.buffer, size, bytes.length);
-			size += bytes.length;
-		}
-		@Override public final void write(byte bytes[], int off, int lenght) {
-			verifyBufferSize(size+lenght);
-			System.arraycopy(bytes, off, this.buffer, size, lenght);
-			size += lenght;
-		}
-		@Override public final void write(int bytes) {
-			verifyBufferSize(size+1);
-			this.buffer[size++] = (byte)bytes;
-		}
-	}
-
-	protected static class FastByteArrayOutputStream extends OutputStream {
-		protected byte[] buffer = null;
-		protected int size = 0;
-
-		public FastByteArrayOutputStream() { this(5*1024); }
-		public FastByteArrayOutputStream(int size) {
-			this.buffer = new byte[size];
-			this.size = 0;
-		}
-		private void verifyBufferSize(int size) {
-			if(size>buffer.length) {
-				byte[] old = buffer;
-				buffer = new byte[Math.max(size, 2*buffer.length)];
-				System.arraycopy(old, 0, buffer, 0, old.length);
-				old = null;
-			}
-		}
-
-		public int getSize() { return size; }
-		public byte[] getByteArray() { return buffer; }
-
-		@Override public final void write(byte buffer[]) {
-			verifyBufferSize(size+buffer.length);
-			System.arraycopy(buffer, 0, this.buffer, size, buffer.length);
-			size += buffer.length;
-		}
-		@Override public final void write(byte buffer[], int offset, int length) {
-			verifyBufferSize(size+length);
-			System.arraycopy(buffer, offset, this.buffer, size, length);
-			size += length;
-		}
-
-		@Override public final void write(int bit) {
-			verifyBufferSize(size+1);
-			this.buffer[size++] = (byte)bit;
-		}
-
-		public void reset() {	size = 0;	}
-		public InputStream getInputStream() {
-			return new FastByteArrayInputStream(buffer, size);
-		}
-
-	}
-	protected static class FastByteArrayInputStream extends InputStream {
-		protected byte[] buffer = null;
-		protected int count=0, position=0;
-
-		public FastByteArrayInputStream(byte[] buffer, int count) {
-			this.buffer = buffer;
-			this.count = count;
-		}
-
-		@Override public final int available() {
-			return count-position;
-		}
-		@Override public final int read() {
-			return (position<count)?(buffer[position++]&0xff):-1;
-		}
-		@Override public final int read(byte[] buffer, int offset, int length) {
-			if(position>=count)
-				return -1;
-			if((position+length)>count)
-				length = (count-position);
-			System.arraycopy(this.buffer, position, buffer, offset, length);
-			position += length;
-			return length;
-		}
-
-		@Override public final long skip(long number) {
-			if((position+number)>count)
-				number = count-position;
-			if(number<0)
-				return 0;
-			position += number;
-			return number;
-		}
 	}
 
 	protected static class DebuggingObjectOutputStream extends ObjectOutputStream {
@@ -422,11 +287,67 @@ public final class Utilities {
 			file.getInputStream(entry).read(bytes);
 			return loadClass(bytes);
 		}
-		private Class<?> loadClass(byte[] bytes) {
+		protected Class<?> loadClass(byte[] bytes) {
 			Class<?> cls = null;
 			cls = defineClass(null, bytes, 0, bytes.length);
 			resolveClass(cls);
 			return cls;
+		}
+	}
+	public static void initLegacyClassLoader(File dir) {
+		if (!dir.isDirectory()) return;
+		List<File> asmFiles = new ArrayList<>();
+		for(File file:dir.listFiles())
+			if(file.getName().matches("asm.*\\.jar"))
+				asmFiles.add(file);
+		if (!asmFiles.isEmpty()) {
+			ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+			for (File asmFile : asmFiles) {
+				try {
+					try {
+						Method method = classLoader.getClass().getDeclaredMethod("addURL", URL.class);
+						method.setAccessible(true);
+						method.invoke(classLoader, asmFile.toURI().toURL());
+					} catch (NoSuchMethodException e) {
+						Method method = classLoader.getClass().getDeclaredMethod("appendToClassPathForInstrumentation", String.class);
+						method.setAccessible(true);
+						method.invoke(classLoader, asmFile.getAbsolutePath());
+					}
+				} catch (Exception e) { e.printStackTrace(); }
+			}
+
+			try { legacyClassLoader = new LegacyClassLoader(); }
+			catch (Throwable t) { t.printStackTrace(); } // it is important to catch throwable here, in order to catch NoClassDefFound*Error* in case an ASM class is missing
+		}
+	}
+	public static boolean hasLegacyClassLoader() {
+		return legacyClassLoader != null;
+	}
+	public static SimpleClassLoader getLegacyClassLoader() {
+		return legacyClassLoader;
+	}
+	public static class LegacyClassLoader extends SimpleClassLoader {
+		public static final String LEGACY_PACKAGE_PREFIX = "de/ksquared/", PACKAGE_PREFIX = "lc/kra/";
+		@Override
+		protected Class<?> loadClass(byte[] bytes) {
+			return super.loadClass(modifyClass(bytes));
+		}
+		private byte[] modifyClass(byte[] bytes) {
+			ClassReader reader = new ClassReader(bytes);
+			ClassWriter writer = new ClassWriter(reader, 0);
+			reader.accept(new ClassRemapper(writer, new Remapper() {
+				@Override
+				public String map(String typeName) {
+					if (typeName.startsWith(LEGACY_PACKAGE_PREFIX)) {
+						return replaceLegacyPackage(typeName);
+					}
+					return typeName;
+				}
+			}), ClassReader.EXPAND_FRAMES);
+			return writer.toByteArray();
+		}
+		public static String replaceLegacyPackage(String name) {
+			return name.replaceFirst(Pattern.quote(LEGACY_PACKAGE_PREFIX), Matcher.quoteReplacement(PACKAGE_PREFIX));
 		}
 	}
 
@@ -448,7 +369,7 @@ public final class Utilities {
 		}
 		@Override protected ObjectStreamClass readClassDescriptor() throws IOException, ClassNotFoundException {
 			ObjectStreamClass descriptor = super.readClassDescriptor(); String name = descriptor.getName();
-			if(name.contains(LEGACY_PACKAGE_PREFIX)) {
+			if(name.startsWith(LEGACY_PACKAGE_PREFIX)) {
 				String newName = replaceLegacyPackage(name);
 				try {
 					// do not return a new ObjectStreamClass looked up from new class definitions, but modify the descriptor read from the stream, otherwise some flags could be wrong, like the flag "hasWriteObjectData" resulting in an exception when trying to read the object

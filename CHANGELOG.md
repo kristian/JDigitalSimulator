@@ -1,3 +1,8 @@
+## 2.5.0 (2024-02-07)
+### Added
+  - Legacy mode to open old plugins (created for version < 1.*)
+  - Documentation about legacy features in README.md
+
 ## 2.4.0 (2024-02-05)
 ### Added
   - Option to change worksheet size
