@@ -1,3 +1,7 @@
+## 2.5.1 (2024-02-13)
+### Fixed
+  - Loading worksheets with plugin components
+
 ## 2.5.0 (2024-02-07)
 ### Added
   - Legacy mode to open old plugins (created for version < 1.*)

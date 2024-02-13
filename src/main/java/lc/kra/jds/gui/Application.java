@@ -142,7 +142,7 @@ import lc.kra.jds.exceptions.PasswordRequiredException;
 /**
  * JDigitalSimulator
  * @author Kristian Kraljic
- * @version 2.5.0
+ * @version 2.5.1
  */
 public class Application extends JFrame {
 	private static final long serialVersionUID = -4693271310855486553L;
@@ -150,7 +150,7 @@ public class Application extends JFrame {
 	public static final String FILE_EXTENSION = "jdsim";
 	public static File pluginDirectory, currentDirectory;
 
-	private static final String VERSION = "2.5.0", COPYRIGHT = "2010-2024", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
+	private static final String VERSION = "2.5.1", COPYRIGHT = "2010-2024", LINES_OF_CODE = "9.509", WORDS_OF_CODE = "36.133", PAGES_OF_CODE = "245";
 
 	private static final String[]
 		TOOLBAR_FRAME_FOCUS = new String[]{"save", "print", "print_level", "simulate", "left", "right", "up", "down", "grid", "secure", "zoom_default", "zoom", "zoom_in", "zoom_out"},

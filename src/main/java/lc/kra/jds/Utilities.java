@@ -382,6 +382,22 @@ public final class Utilities {
 			}
 			return descriptor;
 		}
+		@Override
+		protected Class<?> resolveClass(ObjectStreamClass descriptor) throws ClassNotFoundException, IOException {
+			try {
+				return super.resolveClass(descriptor);
+			} catch (ClassNotFoundException e_a) {
+				try {
+					return Class.forName(descriptor.getName(), false, getSimpleClassLoader());
+				} catch (ClassNotFoundException e_b) {
+					if (hasLegacyClassLoader()) {
+						return Class.forName(descriptor.getName(), false, getLegacyClassLoader());
+					} else {
+						throw e_b;
+					}
+				}
+			}
+		}
 		public static String replaceLegacyPackage(String name) {
 			return name.replaceFirst("^(\\[L)?"+Pattern.quote(LEGACY_PACKAGE_PREFIX), "$1"+Matcher.quoteReplacement(PACKAGE_PREFIX));
 		}
