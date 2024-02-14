@@ -4,7 +4,7 @@
 
 	<groupId>lc.kra.jds</groupId>
 	<artifactId>jds</artifactId>
-	<version>2.5.1</version>
+	<version>2.5.2</version>
 	
 	<name>JDigitalSimulator</name>
 	<description>JDigitalSimulator is a plattform independend Electronic Design Automation software entirely build in Java</description>

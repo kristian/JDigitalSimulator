@@ -87,7 +87,7 @@ public final class Utilities {
 			ObjectOutputStream objectOutput = new ObjectOutputStream(byteOutput);
 			try { objectOutput.writeObject(object); }
 			finally { objectOutput.close(); }
-			ObjectInputStream objectInput = new AlternateClassLoaderObjectInputStream(new ByteArrayInputStream(byteOutput.toByteArray()), Utilities.getSimpleClassLoader());
+			ObjectInputStream objectInput = new LegacyObjectInputStream(new ByteArrayInputStream(byteOutput.toByteArray()));
 			try { copy = objectInput.readObject(); }
 			finally { objectInput.close(); }
 		} catch(Exception e) { e.printStackTrace(); throw new CloneNotSupportedException(); }
@@ -385,16 +385,12 @@ public final class Utilities {
 		@Override
 		protected Class<?> resolveClass(ObjectStreamClass descriptor) throws ClassNotFoundException, IOException {
 			try {
-				return super.resolveClass(descriptor);
-			} catch (ClassNotFoundException e_a) {
-				try {
-					return Class.forName(descriptor.getName(), false, getSimpleClassLoader());
-				} catch (ClassNotFoundException e_b) {
-					if (hasLegacyClassLoader()) {
-						return Class.forName(descriptor.getName(), false, getLegacyClassLoader());
-					} else {
-						throw e_b;
-					}
+				return super.resolveClass(descriptor); // from simple or (parent) system class loader
+			} catch (ClassNotFoundException e) {
+				if (hasLegacyClassLoader()) {
+					return Class.forName(descriptor.getName(), false, getLegacyClassLoader());
+				} else {
+					throw e;
 				}
 			}
 		}

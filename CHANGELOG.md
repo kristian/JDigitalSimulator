@@ -1,3 +1,7 @@
+## 2.5.2 (2024-02-13)
+### Fixed
+  - Copy & pasting legacy plugin components
+
 ## 2.5.1 (2024-02-13)
 ### Fixed
   - Loading worksheets with plugin components
